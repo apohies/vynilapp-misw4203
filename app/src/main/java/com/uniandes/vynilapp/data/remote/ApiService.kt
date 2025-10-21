@@ -1,6 +1,6 @@
 package com.uniandes.vynilapp.data.remote
 
-import com.uniandes.vynilapp.data.Album
+import com.uniandes.vynilapp.data.model.Album
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
