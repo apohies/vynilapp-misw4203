@@ -31,7 +31,7 @@ fun AlbumsScreen(
             .background(Color(0xFF111120))
             .padding(16.dp)
     ) {
-        // Barra de búsqueda
+
         SearchBar(
             value = searchText,
             onValueChange = { searchText = it },
@@ -97,7 +97,7 @@ fun AlbumsGrid(albums: List<com.uniandes.vynilapp.data.model.Album>) {
                 artistName = album.performers.firstOrNull()?.name ?: album.recordLabel,
                 imageUrl = album.cover,
                 onClick = {
-                    // TODO: Navegar a detalles del álbum
+
                 }
             )
         }

@@ -28,7 +28,7 @@ class AlbumsViewModel : ViewModel() {
                 val albums = repository.getAllAlbums()
                 _uiState.value = AlbumsUiState.Success(albums)
             } catch (e: Exception) {
-                _uiState.value = AlbumsUiState.Error(e.message ?: "Error desconocido")
+                _uiState.value = AlbumsUiState.Error(e.message ?: "Error")
             }
         }
     }
