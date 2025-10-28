@@ -24,16 +24,16 @@ class AlbumRepositoryTest {
 
     @Test
     fun `getAllAlbums should delegate to service adapter and return success`() = runBlocking {
-        // Given
+        
         val expectedAlbums = listOf(createSampleAlbum(), createSampleAlbum2())
         val successResult = Result.success(expectedAlbums)
         
         coEvery { albumServiceAdapter.getAllAlbums() } returns successResult
 
-        // When
+        
         val result = albumRepository.getAllAlbums()
 
-        // Then
+        
         assertTrue(result.isSuccess)
         val albums = result.getOrNull()
         assertNotNull(albums)
@@ -46,16 +46,16 @@ class AlbumRepositoryTest {
 
     @Test
     fun `getAllAlbums should delegate to service adapter and return failure`() = runBlocking {
-        // Given
+        
         val exception = Exception("Service error")
         val failureResult = Result.failure<List<Album>>(exception)
         
         coEvery { albumServiceAdapter.getAllAlbums() } returns failureResult
 
-        // When
+        
         val result = albumRepository.getAllAlbums()
 
-        // Then
+        
         assertTrue(result.isFailure)
         val resultException = result.exceptionOrNull()
         assertNotNull(resultException)
@@ -66,17 +66,17 @@ class AlbumRepositoryTest {
 
     @Test
     fun `getAlbumById should delegate to service adapter and return success`() = runBlocking {
-        // Given
+        
         val albumId = 100
         val expectedAlbum = createSampleAlbum()
         val successResult = Result.success(expectedAlbum)
         
         coEvery { albumServiceAdapter.getAlbumById(albumId) } returns successResult
 
-        // When
+        
         val result = albumRepository.getAlbumById(albumId)
 
-        // Then
+        
         assertTrue(result.isSuccess)
         val album = result.getOrNull()
         assertNotNull(album)
@@ -93,17 +93,17 @@ class AlbumRepositoryTest {
 
     @Test
     fun `getAlbumById should delegate to service adapter and return failure`() = runBlocking {
-        // Given
+        
         val albumId = 100
         val exception = Exception("Album not found")
         val failureResult = Result.failure<Album>(exception)
         
         coEvery { albumServiceAdapter.getAlbumById(albumId) } returns failureResult
 
-        // When
+        
         val result = albumRepository.getAlbumById(albumId)
 
-        // Then
+        
         assertTrue(result.isFailure)
         val resultException = result.exceptionOrNull()
         assertNotNull(resultException)
@@ -114,38 +114,38 @@ class AlbumRepositoryTest {
 
     @Test
     fun `getAlbumById should call service adapter with correct album ID`() = runBlocking {
-        // Given
+        
         val albumId = 123
         val expectedAlbum = createSampleAlbum()
         val successResult = Result.success(expectedAlbum)
         
         coEvery { albumServiceAdapter.getAlbumById(albumId) } returns successResult
 
-        // When
+        
         albumRepository.getAlbumById(albumId)
 
-        // Then
+        
         coVerify(exactly = 1) { albumServiceAdapter.getAlbumById(albumId) }
     }
 
     @Test
     fun `getAllAlbums should call service adapter exactly once`() = runBlocking {
-        // Given
+        
         val expectedAlbums = listOf(createSampleAlbum())
         val successResult = Result.success(expectedAlbums)
         
         coEvery { albumServiceAdapter.getAllAlbums() } returns successResult
 
-        // When
+        
         albumRepository.getAllAlbums()
 
-        // Then
+        
         coVerify(exactly = 1) { albumServiceAdapter.getAllAlbums() }
     }
 
     @Test
     fun `repository should handle multiple calls correctly`() = runBlocking {
-        // Given
+        
         val albumId = 100
         val album = createSampleAlbum()
         val albums = listOf(album)
@@ -156,11 +156,11 @@ class AlbumRepositoryTest {
         coEvery { albumServiceAdapter.getAlbumById(albumId) } returns albumSuccessResult
         coEvery { albumServiceAdapter.getAllAlbums() } returns albumsSuccessResult
 
-        // When
+        
         val albumResult = albumRepository.getAlbumById(albumId)
         val albumsResult = albumRepository.getAllAlbums()
 
-        // Then
+        
         assertTrue(albumResult.isSuccess)
         assertTrue(albumsResult.isSuccess)
         

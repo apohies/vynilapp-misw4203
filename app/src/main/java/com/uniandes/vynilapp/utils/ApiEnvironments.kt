@@ -1,8 +1,5 @@
 package com.uniandes.vynilapp.utils
 
-/**
- * Configuración de diferentes entornos para la API
- */
 object ApiEnvironments {
     
     // Entorno de desarrollo local
@@ -48,9 +45,6 @@ object ApiEnvironments {
     }
 }
 
-/**
- * Interfaz para configuración de entorno
- */
 interface EnvironmentConfig {
     val PROTOCOL: String
     val IP: String

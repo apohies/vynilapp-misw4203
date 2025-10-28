@@ -35,17 +35,17 @@ class AlbumDetailViewModelTest {
 
     @Test
     fun `loadAlbumById should update UI state with album data when successful`() = runTest {
-        // Given
+        
         val albumId = 100
         val album = createSampleAlbum()
         val successResult = Result.success(album)
         
         coEvery { albumRepository.getAlbumById(albumId) } returns successResult
 
-        // When
+        
         viewModel.loadAlbumById(albumId)
 
-        // Then
+        
         val uiState = viewModel.uiState.value
         assertFalse(uiState.isLoading)
         assertNull(uiState.error)
@@ -60,17 +60,17 @@ class AlbumDetailViewModelTest {
 
     @Test
     fun `loadAlbumById should update UI state with error when repository fails`() = runTest {
-        // Given
+        
         val albumId = 100
         val exception = Exception("Network error")
         val failureResult = Result.failure<Album>(exception)
         
         coEvery { albumRepository.getAlbumById(albumId) } returns failureResult
 
-        // When
+        
         viewModel.loadAlbumById(albumId)
 
-        // Then
+        
         val uiState = viewModel.uiState.value
         assertFalse(uiState.isLoading)
         assertNotNull(uiState.error)
@@ -82,17 +82,17 @@ class AlbumDetailViewModelTest {
 
     @Test
     fun `loadAlbumById should set loading state during API call`() = runTest {
-        // Given
+        
         val albumId = 100
         val album = createSampleAlbum()
         val successResult = Result.success(album)
         
         coEvery { albumRepository.getAlbumById(albumId) } returns successResult
 
-        // When
+        
         viewModel.loadAlbumById(albumId)
 
-        // Then
+        
         val uiState = viewModel.uiState.value
         assertFalse(uiState.isLoading) // Should be false after completion
         assertNull(uiState.error)
@@ -102,103 +102,103 @@ class AlbumDetailViewModelTest {
 
     @Test
     fun `onEvent LoadAlbumById should call loadAlbumById with correct ID`() = runTest {
-        // Given
+        
         val albumId = 123
         val album = createSampleAlbum()
         val successResult = Result.success(album)
         
         coEvery { albumRepository.getAlbumById(albumId) } returns successResult
 
-        // When
+        
         viewModel.onEvent(AlbumDetailEvent.LoadAlbumById(albumId))
 
-        // Then
+        
         coVerify { albumRepository.getAlbumById(albumId) }
     }
 
     @Test
     fun `onEvent LoadAlbum should call loadAlbumById with current album ID`() = runTest {
-        // Given
+        
         val albumId = 100
         val album = createSampleAlbum()
         val successResult = Result.success(album)
         
         coEvery { albumRepository.getAlbumById(albumId) } returns successResult
 
-        // When
+        
         viewModel.loadAlbumById(albumId) // Set current album ID
         viewModel.onEvent(AlbumDetailEvent.LoadAlbum)
 
-        // Then
+        
         coVerify(exactly = 2) { albumRepository.getAlbumById(albumId) }
     }
 
     @Test
     fun `toggleLike should update isLiked state`() = runTest {
-        // Given
+        
         val initialUiState = viewModel.uiState.value
         assertFalse(initialUiState.isLiked)
 
-        // When
+        
         viewModel.onEvent(AlbumDetailEvent.ToggleLike)
 
-        // Then
+        
         val updatedUiState = viewModel.uiState.value
         assertTrue(updatedUiState.isLiked)
     }
 
     @Test
     fun `toggleSave should update isSaved state`() = runTest {
-        // Given
+        
         val initialUiState = viewModel.uiState.value
         assertFalse(initialUiState.isSaved)
 
-        // When
+        
         viewModel.onEvent(AlbumDetailEvent.ToggleSave)
 
-        // Then
+        
         val updatedUiState = viewModel.uiState.value
         assertTrue(updatedUiState.isSaved)
     }
 
     @Test
     fun `playAlbum should update isPlaying state`() = runTest {
-        // Given
+        
         val initialUiState = viewModel.uiState.value
         assertFalse(initialUiState.isPlaying)
 
-        // When
+        
         viewModel.onEvent(AlbumDetailEvent.PlayAlbum)
 
-        // Then
+        
         val updatedUiState = viewModel.uiState.value
         assertTrue(updatedUiState.isPlaying)
     }
 
     @Test
     fun `pauseAlbum should update isPlaying state to false`() = runTest {
-        // Given
+        
         viewModel.onEvent(AlbumDetailEvent.PlayAlbum) // Set to playing first
         assertTrue(viewModel.uiState.value.isPlaying)
 
-        // When
+        
         viewModel.onEvent(AlbumDetailEvent.PauseAlbum)
 
-        // Then
+        
         val updatedUiState = viewModel.uiState.value
         assertFalse(updatedUiState.isPlaying)
     }
 
     @Test
     fun `addComment should add comment to comments list`() = runTest {
-        // Given
+        
         val commentText = "Excelente álbum"
         val initialCommentsCount = viewModel.uiState.value.comments.size
 
-        // When
+        
         viewModel.onEvent(AlbumDetailEvent.AddComment(commentText))
 
-        // Then
+        
         val updatedUiState = viewModel.uiState.value
         assertEquals(initialCommentsCount + 1, updatedUiState.comments.size)
         assertTrue(updatedUiState.comments.any { it.description == commentText })
@@ -206,44 +206,44 @@ class AlbumDetailViewModelTest {
 
     @Test
     fun `updateCommentText should update newCommentText`() = runTest {
-        // Given
+        
         val commentText = "Mi comentario"
 
-        // When
+        
         viewModel.onEvent(AlbumDetailEvent.UpdateCommentText(commentText))
 
-        // Then
+        
         val updatedUiState = viewModel.uiState.value
         assertEquals(commentText, updatedUiState.newCommentText)
     }
 
     @Test
     fun `getCurrentAlbumId should return current album ID`() = runTest {
-        // Given
+        
         val albumId = 123
         viewModel.loadAlbumById(albumId)
 
-        // When
+        
         val currentId = viewModel.getCurrentAlbumId()
 
-        // Then
+        
         assertEquals(albumId, currentId)
     }
 
     @Test
     fun `refreshAlbum should reload current album`() = runTest {
-        // Given
+        
         val albumId = 100
         val album = createSampleAlbum()
         val successResult = Result.success(album)
         
         coEvery { albumRepository.getAlbumById(albumId) } returns successResult
 
-        // When
+        
         viewModel.loadAlbumById(albumId) // Set current album ID
         viewModel.refreshAlbum()
 
-        // Then
+        
         coVerify(exactly = 2) { albumRepository.getAlbumById(albumId) }
     }
 

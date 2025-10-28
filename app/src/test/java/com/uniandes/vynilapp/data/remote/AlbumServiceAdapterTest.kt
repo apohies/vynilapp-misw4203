@@ -28,7 +28,7 @@ class AlbumServiceAdapterTest {
 
     @Test
     fun `getAlbumById should return success when API call is successful`() = runBlocking {
-        // Given
+        
         val albumId = 100
         val albumDto = createSampleAlbumDto()
         val response = mockk<Response<AlbumDto>>()
@@ -37,10 +37,10 @@ class AlbumServiceAdapterTest {
         every { response.body() } returns albumDto
         coEvery { apiService.getAlbumById(albumId) } returns response
 
-        // When
+        
         val result = albumServiceAdapter.getAlbumById(albumId)
 
-        // Then
+        
         assertTrue(result.isSuccess)
         val album = result.getOrNull()
         assertNotNull(album)
@@ -58,7 +58,7 @@ class AlbumServiceAdapterTest {
 
     @Test
     fun `getAlbumById should return failure when API call fails`() = runBlocking {
-        // Given
+        
         val albumId = 100
         val response = mockk<Response<AlbumDto>>()
         
@@ -67,10 +67,10 @@ class AlbumServiceAdapterTest {
         every { response.message() } returns "Not Found"
         coEvery { apiService.getAlbumById(albumId) } returns response
 
-        // When
+        
         val result = albumServiceAdapter.getAlbumById(albumId)
 
-        // Then
+        
         assertTrue(result.isFailure)
         val exception = result.exceptionOrNull()
         assertNotNull(exception)
@@ -82,16 +82,16 @@ class AlbumServiceAdapterTest {
 
     @Test
     fun `getAlbumById should return failure when API call throws exception`() = runBlocking {
-        // Given
+        
         val albumId = 100
         val exception = Exception("Network error")
         
         coEvery { apiService.getAlbumById(albumId) } throws exception
 
-        // When
+        
         val result = albumServiceAdapter.getAlbumById(albumId)
 
-        // Then
+        
         assertTrue(result.isFailure)
         val resultException = result.exceptionOrNull()
         assertNotNull(resultException)
@@ -103,7 +103,7 @@ class AlbumServiceAdapterTest {
 
     @Test
     fun `getAlbumById should return failure when response body is null`() = runBlocking {
-        // Given
+        
         val albumId = 100
         val response = mockk<Response<AlbumDto>>()
         
@@ -111,10 +111,10 @@ class AlbumServiceAdapterTest {
         every { response.body() } returns null
         coEvery { apiService.getAlbumById(albumId) } returns response
 
-        // When
+        
         val result = albumServiceAdapter.getAlbumById(albumId)
 
-        // Then
+        
         assertTrue(result.isFailure)
         val exception = result.exceptionOrNull()
         assertNotNull(exception)
@@ -125,7 +125,7 @@ class AlbumServiceAdapterTest {
 
     @Test
     fun `getAllAlbums should return success when API call is successful`() = runBlocking {
-        // Given
+        
         val albumDtos = listOf(createSampleAlbumDto(), createSampleAlbumDto2())
         val response = mockk<Response<List<AlbumDto>>>()
         
@@ -133,10 +133,10 @@ class AlbumServiceAdapterTest {
         every { response.body() } returns albumDtos
         coEvery { apiService.getAllAlbums() } returns response
 
-        // When
+        
         val result = albumServiceAdapter.getAllAlbums()
 
-        // Then
+        
         assertTrue(result.isSuccess)
         val albums = result.getOrNull()
         assertNotNull(albums)
@@ -149,7 +149,7 @@ class AlbumServiceAdapterTest {
 
     @Test
     fun `getAllAlbums should return failure when API call fails`() = runBlocking {
-        // Given
+        
         val response = mockk<Response<List<AlbumDto>>>()
         
         every { response.isSuccessful } returns false
@@ -157,10 +157,10 @@ class AlbumServiceAdapterTest {
         every { response.message() } returns "Internal Server Error"
         coEvery { apiService.getAllAlbums() } returns response
 
-        // When
+        
         val result = albumServiceAdapter.getAllAlbums()
 
-        // Then
+        
         assertTrue(result.isFailure)
         val exception = result.exceptionOrNull()
         assertNotNull(exception)
@@ -172,15 +172,15 @@ class AlbumServiceAdapterTest {
 
     @Test
     fun `getAllAlbums should return failure when API call throws exception`() = runBlocking {
-        // Given
+        
         val exception = Exception("Connection timeout")
         
         coEvery { apiService.getAllAlbums() } throws exception
 
-        // When
+        
         val result = albumServiceAdapter.getAllAlbums()
 
-        // Then
+        
         assertTrue(result.isFailure)
         val resultException = result.exceptionOrNull()
         assertNotNull(resultException)
@@ -192,17 +192,17 @@ class AlbumServiceAdapterTest {
 
     @Test
     fun `getAllAlbums should return failure when response body is null`() = runBlocking {
-        // Given
+        
         val response = mockk<Response<List<AlbumDto>>>()
         
         every { response.isSuccessful } returns true
         every { response.body() } returns null
         coEvery { apiService.getAllAlbums() } returns response
 
-        // When
+        
         val result = albumServiceAdapter.getAllAlbums()
 
-        // Then
+        
         assertTrue(result.isFailure)
         val exception = result.exceptionOrNull()
         assertNotNull(exception)
