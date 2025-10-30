@@ -1,5 +1,7 @@
-package com.uniandes.vynilapp.ui.albums
+package com.uniandes.vynilapp.views
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -12,18 +14,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uniandes.vynilapp.model.Album
 import com.uniandes.vynilapp.views.common.AlbumCard
 import com.uniandes.vynilapp.views.common.SearchBar
+import com.uniandes.vynilapp.viewModels.albums.AlbumsViewModel
+import com.uniandes.vynilapp.viewModels.albums.AlbumsUiState
 
 @Composable
 fun AlbumsScreen(
     modifier: Modifier = Modifier,
-    viewModel: AlbumsViewModel = viewModel()
+    viewModel: AlbumsViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var searchText by remember { mutableStateOf("") }
 
     Column(
@@ -86,6 +92,8 @@ fun LoadingContent() {
 
 @Composable
 fun AlbumsGrid(albums: List<Album>) {
+    val context = LocalContext.current
+    
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(vertical = 8.dp),
@@ -98,7 +106,9 @@ fun AlbumsGrid(albums: List<Album>) {
                 artistName = album.performers.firstOrNull()?.name ?: album.recordLabel,
                 imageUrl = album.cover,
                 onClick = {
-
+                    // Navegar al detalle del álbum
+                    val intent = AlbumDetailActivity.createIntent(context, album.id)
+                    context.startActivity(intent)
                 }
             )
         }

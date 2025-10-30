@@ -1,4 +1,4 @@
-package com.uniandes.vynilapp.ui.albums
+package com.uniandes.vynilapp.viewModels.albums
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,10 +8,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class AlbumsViewModel : ViewModel() {
-
-    private val repository = AlbumRepository()
+@HiltViewModel
+class AlbumsViewModel @Inject constructor(
+    private val repository: AlbumRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AlbumsUiState>(AlbumsUiState.Loading)
     val uiState: StateFlow<AlbumsUiState> = _uiState.asStateFlow()
@@ -25,8 +28,15 @@ class AlbumsViewModel : ViewModel() {
             _uiState.value = AlbumsUiState.Loading
 
             try {
-                val albums = repository.getAllAlbums()
-                _uiState.value = AlbumsUiState.Success(albums)
+                val result = repository.getAllAlbums()
+                result.fold(
+                    onSuccess = { albums ->
+                        _uiState.value = AlbumsUiState.Success(albums)
+                    },
+                    onFailure = { exception ->
+                        _uiState.value = AlbumsUiState.Error(exception.message ?: "Error")
+                    }
+                )
             } catch (e: Exception) {
                 _uiState.value = AlbumsUiState.Error(e.message ?: "Error")
             }
