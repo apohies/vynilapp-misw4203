@@ -1,13 +1,10 @@
 package com.uniandes.vynilapp.views
 
-import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,18 +12,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.request.ImageRequest
 import com.uniandes.vynilapp.model.Artist
 import com.uniandes.vynilapp.viewModels.artists.ArtistDetailViewModel
 import com.uniandes.vynilapp.views.common.ErrorScreen
 import com.uniandes.vynilapp.views.common.LoadingScreen
+import com.uniandes.vynilapp.views.common.TopBar
 import com.uniandes.vynilapp.views.states.ArtistDetailEvent
 import com.uniandes.vynilapp.views.states.ArtistDetailUiState
+import com.uniandes.vynilapp.R
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
+import android.util.Log
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
 
 @Composable
 fun ArtistDetailScreen(
@@ -72,6 +79,7 @@ fun ArtistDetailContent(
     modifier: Modifier = Modifier,
     onBack: () -> Unit
 ) {
+    val artistDetailTitle = stringResource(id = R.string.artist_detail_title)
     // Create a scroll state
     val scrollState = rememberScrollState()
 
@@ -81,30 +89,7 @@ fun ArtistDetailContent(
             .background(Color(0xFF111120))
     ) {
         // Top Bar - Fixed (not scrolling)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.White
-                )
-            }
-
-            Text(
-                text = "Artist Details",
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.width(48.dp))
-        }
+        TopBar(artistDetailTitle,onBack)
 
         // Scrollable Content
         Column(
@@ -116,55 +101,30 @@ fun ArtistDetailContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Artist Info Card
-            Card(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF1A1A2E)
-                )
+                    .padding(24.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Artist Image Placeholder
-                    Box(
-                        modifier = Modifier
-                            .size(150.dp)
-                            .background(
-                                Color(0xFF6C63FF),
-                                RoundedCornerShape(75.dp)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
+                ArtistAvatar(uiState.artist)
 
-                        Text(
-                            text = uiState.artist?.name?.firstOrNull()?.uppercase() ?: "A",
-                            color = Color.White,
-                            fontSize = 64.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                Spacer(modifier = Modifier.height(24.dp))
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    uiState.artist?.name?.let {
-                        Text(
-                            text = it,
-                            color = Color.White,
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
+                uiState.artist?.name?.let {
                     Text(
-                        text = "Biography and additional information will be displayed here. This is a longer text to demonstrate scrolling functionality.",
+                        text = it,
+                        color = Color.White,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                uiState.artist?.description?.let {
+                    Text(
+                        text = it,
                         color = Color(0xFFB0B0B0),
                         fontSize = 14.sp
                     )
@@ -189,6 +149,78 @@ fun ArtistDetailContent(
             // Add bottom padding for better scrolling experience
             Spacer(modifier = Modifier.height(32.dp))
         }
+    }
+}
+
+@Composable
+fun ArtistAvatar(
+    artist: Artist?
+){
+    if(artist?.image != null) {
+        val imageUrl = artist.image
+        Log.d("ArtistDetail", "Loading artist image: $imageUrl")
+
+        SubcomposeAsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(imageUrl)
+                .crossfade(true)
+                .build(),
+            contentDescription = artist.name,
+            modifier = Modifier
+                .size(150.dp)
+                .clip(RoundedCornerShape(75.dp)),
+            contentScale = ContentScale.Crop,
+            loading = {
+                // Show loading indicator
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFF2A2A3E)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = Color(0xFF6C63FF),
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            },
+            error = { error ->
+                // Show when image fails to load
+                val errorMessage = error.result.throwable.message ?: "Unknown error"
+                Log.e("ArtistDetail", "Failed to load image: $imageUrl - Error: $errorMessage", error.result.throwable)
+
+                ArtistAvatarPlaceHolder(artist.name)
+            },
+            success = { state ->
+                Log.i("ArtistDetail", "Successfully loaded image: $imageUrl")
+                // Use default rendering when successful
+                SubcomposeAsyncImageContent()
+            }
+        )
+    } else {
+        Log.w("ArtistDetail", "Artist image URL is null")
+        // Artist Image Placeholder
+        ArtistAvatarPlaceHolder(null)
+    }
+}
+
+@Composable
+fun ArtistAvatarPlaceHolder(name: String?) {
+    Box(
+        modifier = Modifier
+            .size(150.dp)
+            .background(
+                Color(0xFF6C63FF),
+                RoundedCornerShape(75.dp)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = name?.firstOrNull()?.uppercase() ?: "A",
+            color = Color.White,
+            fontSize = 64.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -230,7 +262,7 @@ fun PreviewArtistDetailWithAlbums() {
         artist = Artist(
             id = 104,
             name = "Pink Floyd",
-            image = "https://example.com/pinkfloyd.jpg",
+            image = null,
             description = "English rock band formed in London in 1965, known for progressive and psychedelic music.",
             birthDate = "1965-01-01T00:00:00.000Z",
             albums = emptyList(),

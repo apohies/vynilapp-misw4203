@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class Artist(
     val id: Int,
     val name: String,
-    val image: String,
+    val image: String?,
     val description: String,
     @SerializedName("birthDate")
     val birthDate: String,
