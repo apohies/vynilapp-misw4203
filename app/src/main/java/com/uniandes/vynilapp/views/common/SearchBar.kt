@@ -1,4 +1,4 @@
-package com.uniandes.vynilapp.components
+package com.uniandes.vynilapp.views.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

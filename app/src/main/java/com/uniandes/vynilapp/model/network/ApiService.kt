@@ -1,8 +1,13 @@
-package com.uniandes.vynilapp.data.network
+package com.uniandes.vynilapp.model.network
 
-import com.uniandes.vynilapp.data.model.Album
+import com.uniandes.vynilapp.model.Album
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
 interface ApiService {
 

@@ -2,8 +2,8 @@ package com.uniandes.vynilapp.ui.albums
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uniandes.vynilapp.data.model.Album
-import com.uniandes.vynilapp.data.repository.AlbumRepository
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.model.repository.AlbumRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

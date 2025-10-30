@@ -1,4 +1,4 @@
-package com.uniandes.vynilapp.data.model
+package com.uniandes.vynilapp.model
 import com.google.gson.annotations.SerializedName
 data class Album(
     val id: Int,

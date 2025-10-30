@@ -1,8 +1,7 @@
-package com.uniandes.vynilapp.data.repository
+package com.uniandes.vynilapp.model.repository
 
-import com.uniandes.vynilapp.data.model.Album
-import com.uniandes.vynilapp.data.network.ApiService
-import com.uniandes.vynilapp.data.network.RetrofitClient
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.model.network.RetrofitClient
 
 
 class AlbumRepository {

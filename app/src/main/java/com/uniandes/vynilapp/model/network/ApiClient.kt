@@ -1,5 +1,6 @@
-package com.uniandes.vynilapp.data.network
+package com.uniandes.vynilapp.model.network
 
+import com.uniandes.vynilapp.model.network.ApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

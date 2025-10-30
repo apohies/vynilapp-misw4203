@@ -14,8 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.uniandes.vynilapp.components.AlbumCard
-import com.uniandes.vynilapp.components.SearchBar
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.views.common.AlbumCard
+import com.uniandes.vynilapp.views.common.SearchBar
 
 @Composable
 fun AlbumsScreen(
@@ -84,7 +85,7 @@ fun LoadingContent() {
 }
 
 @Composable
-fun AlbumsGrid(albums: List<com.uniandes.vynilapp.data.model.Album>) {
+fun AlbumsGrid(albums: List<Album>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(vertical = 8.dp),
