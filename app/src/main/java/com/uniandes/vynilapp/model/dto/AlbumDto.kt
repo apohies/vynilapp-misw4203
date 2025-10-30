@@ -1,4 +1,4 @@
-package com.uniandes.vynilapp.data.remote.dto
+package com.uniandes.vynilapp.model.dto
 
 import com.google.gson.annotations.SerializedName
 

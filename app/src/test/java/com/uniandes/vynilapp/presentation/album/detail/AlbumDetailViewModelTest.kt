@@ -1,10 +1,12 @@
 package com.uniandes.vynilapp.presentation.album.detail
 
-import com.uniandes.vynilapp.data.model.Album
-import com.uniandes.vynilapp.data.model.Comment
-import com.uniandes.vynilapp.data.model.Performer
-import com.uniandes.vynilapp.data.model.Track
-import com.uniandes.vynilapp.data.repository.AlbumRepository
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.model.Comment
+import com.uniandes.vynilapp.model.Performer
+import com.uniandes.vynilapp.model.Track
+import com.uniandes.vynilapp.model.repository.AlbumRepository
+import com.uniandes.vynilapp.viewModels.albums.AlbumDetailViewModel
+import com.uniandes.vynilapp.views.AlbumDetailEvent
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

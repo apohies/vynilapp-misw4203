@@ -1,9 +1,10 @@
-package com.uniandes.vynilapp.data.repository
+package com.uniandes.vynilapp.model.repository
 
-import com.uniandes.vynilapp.data.model.Album
-import com.uniandes.vynilapp.data.remote.AlbumServiceAdapter
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.model.services.AlbumServiceAdapter
+import javax.inject.Inject
 
-class AlbumRepository(
+class AlbumRepository @Inject constructor(
     private val albumServiceAdapter: AlbumServiceAdapter
 ) {
 

@@ -1,8 +1,8 @@
-package com.uniandes.vynilapp.presentation.album.detail
+package com.uniandes.vynilapp.views
 
-import com.uniandes.vynilapp.data.model.Album
-import com.uniandes.vynilapp.data.model.Comment
-import com.uniandes.vynilapp.data.model.Track
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.model.Comment
+import com.uniandes.vynilapp.model.Track
 
 data class AlbumDetailUiState(
     val isLoading: Boolean = false,

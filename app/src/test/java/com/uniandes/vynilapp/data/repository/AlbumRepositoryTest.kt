@@ -1,10 +1,11 @@
 package com.uniandes.vynilapp.data.repository
 
-import com.uniandes.vynilapp.data.model.Album
-import com.uniandes.vynilapp.data.model.Comment
-import com.uniandes.vynilapp.data.model.Performer
-import com.uniandes.vynilapp.data.model.Track
-import com.uniandes.vynilapp.data.remote.AlbumServiceAdapter
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.model.Comment
+import com.uniandes.vynilapp.model.Performer
+import com.uniandes.vynilapp.model.Track
+import com.uniandes.vynilapp.model.services.AlbumServiceAdapter
+import com.uniandes.vynilapp.model.repository.AlbumRepository
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -221,9 +222,9 @@ class AlbumRepositoryTest {
             description = "Otro álbum de prueba",
             genre = "Rock",
             recordLabel = "Sony",
-            tracks = null,
-            performers = null,
-            comments = null
+            tracks = emptyList(),
+            performers = emptyList(),
+            comments = emptyList()
         )
     }
 }

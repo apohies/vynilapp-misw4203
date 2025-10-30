@@ -5,6 +5,8 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.uniandes.vynilapp.test.BaseEspressoTest
+import com.uniandes.vynilapp.views.AlbumDetailActivity
+import com.uniandes.vynilapp.views.AlbumDetailScreen
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -1,4 +1,4 @@
-package com.uniandes.vynilapp.presentation.album.detail
+package com.uniandes.vynilapp.views
 
 import android.content.Intent
 import android.os.Bundle
@@ -24,12 +24,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.platform.LocalContext
+import android.app.Activity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uniandes.vynilapp.ui.theme.VynilappTheme
 import com.uniandes.vynilapp.utils.DateUtils
+import com.uniandes.vynilapp.viewModels.albums.AlbumDetailViewModel
+import com.uniandes.vynilapp.views.AlbumDetailUiState
+import com.uniandes.vynilapp.views.AlbumDetailEvent
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.model.Track
+import com.uniandes.vynilapp.model.Comment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -71,6 +79,7 @@ fun AlbumDetailScreen(
     viewModel: AlbumDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     
     // Cargar datos cuando se inicializa la pantalla
     LaunchedEffect(albumId) {
@@ -93,7 +102,10 @@ fun AlbumDetailScreen(
             AlbumDetailContent(
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
-                modifier = modifier
+                modifier = modifier,
+                onBack = {
+                    (context as? Activity)?.finish()
+                }
             )
         }
     }
@@ -159,7 +171,8 @@ fun ErrorScreen(
 fun AlbumDetailContent(
     uiState: AlbumDetailUiState,
     onEvent: (AlbumDetailEvent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit
 ) {
     LazyColumn(
         modifier = modifier
@@ -169,7 +182,7 @@ fun AlbumDetailContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            TopBar()
+            TopBar(onBack = onBack)
         }
         
         item {
@@ -205,7 +218,7 @@ fun AlbumDetailContent(
 }
 
 @Composable
-fun TopBar() {
+fun TopBar(onBack: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -213,7 +226,7 @@ fun TopBar() {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = { /* Navegar hacia atrás */ }) {
+        IconButton(onClick = onBack) {
             Icon(
                 Icons.Default.ArrowBack,
                 contentDescription = "Atrás",
@@ -240,7 +253,7 @@ fun TopBar() {
 
 @Composable
 fun AlbumHeader(
-    album: com.uniandes.vynilapp.data.model.Album?,
+    album: Album?,
     isPlaying: Boolean,
     isLiked: Boolean,
     isSaved: Boolean,
@@ -355,8 +368,8 @@ fun AlbumHeader(
 
 @Composable
 fun SongsSection(
-    tracks: List<com.uniandes.vynilapp.data.model.Track>,
-    onAddTrack: (com.uniandes.vynilapp.data.model.Track) -> Unit
+    tracks: List<Track>,
+    onAddTrack: (Track) -> Unit
 ) {
     Column {
         Text(
@@ -374,7 +387,7 @@ fun SongsSection(
         // Botón para agregar canción
         OutlinedButton(
             onClick = { 
-                val newTrack = com.uniandes.vynilapp.data.model.Track(
+                val newTrack = Track(
                     id = tracks.size + 1,
                     name = "Nueva Canción",
                     duration = "0:00"
@@ -405,7 +418,7 @@ fun SongsSection(
 }
 
 @Composable
-fun SongItem(track: com.uniandes.vynilapp.data.model.Track) {
+fun SongItem(track: Track) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -454,7 +467,7 @@ fun SongItem(track: com.uniandes.vynilapp.data.model.Track) {
 
 @Composable
 fun CommentsSection(
-    comments: List<com.uniandes.vynilapp.data.model.Comment>,
+    comments: List<Comment>,
     newCommentText: String,
     onCommentTextChange: (String) -> Unit,
     onAddComment: (String) -> Unit
@@ -523,7 +536,7 @@ fun CommentsSection(
 }
 
 @Composable
-fun CommentItem(comment: com.uniandes.vynilapp.data.model.Comment) {
+fun CommentItem(comment: Comment) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

@@ -1,13 +1,14 @@
-package com.uniandes.vynilapp.data.remote
+package com.uniandes.vynilapp.model.services
 
-import com.uniandes.vynilapp.data.model.Album
-import com.uniandes.vynilapp.data.model.Comment
-import com.uniandes.vynilapp.data.model.Performer
-import com.uniandes.vynilapp.data.model.Track
-import com.uniandes.vynilapp.data.remote.dto.AlbumDto
-import com.uniandes.vynilapp.data.remote.dto.CommentDto
-import com.uniandes.vynilapp.data.remote.dto.PerformerDto
-import com.uniandes.vynilapp.data.remote.dto.TrackDto
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.model.Comment
+import com.uniandes.vynilapp.model.Performer
+import com.uniandes.vynilapp.model.Track
+import com.uniandes.vynilapp.model.dto.AlbumDto
+import com.uniandes.vynilapp.model.dto.CommentDto
+import com.uniandes.vynilapp.model.dto.PerformerDto
+import com.uniandes.vynilapp.model.dto.TrackDto
+import com.uniandes.vynilapp.model.network.ApiService
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,7 +24,7 @@ class AlbumServiceAdapter(
             
             if (response.isSuccessful && response.body() != null) {
                 val albumDto = response.body()!!
-                val album = albumDto.toDomainModel()
+                val album = convertToAlbum(albumDto)
                 Result.success(album)
             } else if (response.isSuccessful && response.body() == null) {
                 Result.failure(
@@ -47,7 +48,7 @@ class AlbumServiceAdapter(
             
             if (response.isSuccessful && response.body() != null) {
                 val albumDtos = response.body()!!
-                val albums = albumDtos.map { it.toDomainModel() }
+                val albums = albumDtos.map { albumDto -> convertToAlbum(albumDto) }
                 Result.success(albums)
             } else if (response.isSuccessful && response.body() == null) {
                 Result.failure(
@@ -66,43 +67,43 @@ class AlbumServiceAdapter(
     }
 }
 
-private fun AlbumDto.toDomainModel(): Album {
+private fun convertToAlbum(albumDto: AlbumDto): Album {
     return Album(
-        id = this.id,
-        name = this.name,
-        cover = this.cover,
-        releaseDate = this.releaseDate,
-        description = this.description,
-        genre = this.genre,
-        recordLabel = this.recordLabel,
-        tracks = this.tracks?.map { it.toDomainModel() },
-        performers = this.performers?.map { it.toDomainModel() },
-        comments = this.comments?.map { it.toDomainModel() }
+        id = albumDto.id,
+        name = albumDto.name,
+        cover = albumDto.cover,
+        releaseDate = albumDto.releaseDate,
+        description = albumDto.description,
+        genre = albumDto.genre,
+        recordLabel = albumDto.recordLabel,
+        tracks = albumDto.tracks?.map { trackDto -> convertToTrack(trackDto) } ?: emptyList(),
+        performers = albumDto.performers?.map { performerDto -> convertToPerformer(performerDto) } ?: emptyList(),
+        comments = albumDto.comments?.map { commentDto -> convertToComment(commentDto) } ?: emptyList()
     )
 }
 
-private fun TrackDto.toDomainModel(): Track {
+private fun convertToTrack(trackDto: TrackDto): Track {
     return Track(
-        id = this.id,
-        name = this.name,
-        duration = this.duration
+        id = trackDto.id,
+        name = trackDto.name,
+        duration = trackDto.duration
     )
 }
 
-private fun PerformerDto.toDomainModel(): Performer {
+private fun convertToPerformer(performerDto: PerformerDto): Performer {
     return Performer(
-        id = this.id,
-        name = this.name,
-        image = this.image,
-        description = this.description,
-        birthDate = this.birthDate
+        id = performerDto.id,
+        name = performerDto.name,
+        image = performerDto.image,
+        description = performerDto.description,
+        birthDate = performerDto.birthDate
     )
 }
 
-private fun CommentDto.toDomainModel(): Comment {
+private fun convertToComment(commentDto: CommentDto): Comment {
     return Comment(
-        id = this.id,
-        description = this.description,
-        rating = this.rating
+        id = commentDto.id,
+        description = commentDto.description,
+        rating = commentDto.rating
     )
 }

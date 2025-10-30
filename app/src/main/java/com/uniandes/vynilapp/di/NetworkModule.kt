@@ -1,9 +1,9 @@
 package com.uniandes.vynilapp.di
 
-import com.uniandes.vynilapp.data.remote.ApiClient
-import com.uniandes.vynilapp.data.remote.ApiService
-import com.uniandes.vynilapp.data.remote.AlbumServiceAdapter
-import com.uniandes.vynilapp.data.repository.AlbumRepository
+import com.uniandes.vynilapp.model.network.RetrofitClient
+import com.uniandes.vynilapp.model.network.ApiService
+import com.uniandes.vynilapp.model.services.AlbumServiceAdapter
+import com.uniandes.vynilapp.model.repository.AlbumRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +17,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideApiService(): ApiService {
-        return ApiClient.apiService
+        return RetrofitClient.apiService
     }
 
     @Provides

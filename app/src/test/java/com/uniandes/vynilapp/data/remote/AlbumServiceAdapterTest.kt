@@ -1,13 +1,11 @@
 package com.uniandes.vynilapp.data.remote
 
-import com.uniandes.vynilapp.data.model.Album
-import com.uniandes.vynilapp.data.model.Comment
-import com.uniandes.vynilapp.data.model.Performer
-import com.uniandes.vynilapp.data.model.Track
-import com.uniandes.vynilapp.data.remote.dto.AlbumDto
-import com.uniandes.vynilapp.data.remote.dto.CommentDto
-import com.uniandes.vynilapp.data.remote.dto.PerformerDto
-import com.uniandes.vynilapp.data.remote.dto.TrackDto
+import com.uniandes.vynilapp.model.dto.AlbumDto
+import com.uniandes.vynilapp.model.dto.CommentDto
+import com.uniandes.vynilapp.model.dto.PerformerDto
+import com.uniandes.vynilapp.model.dto.TrackDto
+import com.uniandes.vynilapp.model.network.ApiService
+import com.uniandes.vynilapp.model.services.AlbumServiceAdapter
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Before

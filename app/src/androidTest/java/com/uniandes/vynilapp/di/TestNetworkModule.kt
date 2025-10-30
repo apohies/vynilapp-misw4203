@@ -1,12 +1,12 @@
 package com.uniandes.vynilapp.di
 
-import com.uniandes.vynilapp.data.model.Album
-import com.uniandes.vynilapp.data.model.Comment
-import com.uniandes.vynilapp.data.model.Performer
-import com.uniandes.vynilapp.data.model.Track
-import com.uniandes.vynilapp.data.remote.ApiService
-import com.uniandes.vynilapp.data.remote.AlbumServiceAdapter
-import com.uniandes.vynilapp.data.repository.AlbumRepository
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.model.Comment
+import com.uniandes.vynilapp.model.Performer
+import com.uniandes.vynilapp.model.Track
+import com.uniandes.vynilapp.model.network.ApiService
+import com.uniandes.vynilapp.model.services.AlbumServiceAdapter
+import com.uniandes.vynilapp.model.repository.AlbumRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
@@ -26,12 +26,12 @@ object TestNetworkModule {
     @Singleton
     fun provideMockApiService(): ApiService {
         return object : ApiService {
-            override suspend fun getAlbumById(id: Int): Response<com.uniandes.vynilapp.data.remote.dto.AlbumDto> {
+            override suspend fun getAlbumById(id: Int): Response<com.uniandes.vynilapp.model.dto.AlbumDto> {
                 delay(100)
                 
                 return when (id) {
                     100 -> {
-                        val albumDto = com.uniandes.vynilapp.data.remote.dto.AlbumDto(
+                        val albumDto = com.uniandes.vynilapp.model.dto.AlbumDto(
                             id = 100,
                             name = "Buscando América",
                             cover = "https://example.com/cover.jpg",
@@ -40,11 +40,11 @@ object TestNetworkModule {
                             genre = "Salsa",
                             recordLabel = "Elektra",
                             tracks = listOf(
-                                com.uniandes.vynilapp.data.remote.dto.TrackDto(100, "Decisiones", "5:05"),
-                                com.uniandes.vynilapp.data.remote.dto.TrackDto(101, "Desapariciones", "6:29")
+                                com.uniandes.vynilapp.model.dto.TrackDto(100, "Decisiones", "5:05"),
+                                com.uniandes.vynilapp.model.dto.TrackDto(101, "Desapariciones", "6:29")
                             ),
                             performers = listOf(
-                                com.uniandes.vynilapp.data.remote.dto.PerformerDto(
+                                com.uniandes.vynilapp.model.dto.PerformerDto(
                                     id = 100,
                                     name = "Rubén Blades",
                                     image = "https://example.com/performer.jpg",
@@ -53,13 +53,13 @@ object TestNetworkModule {
                                 )
                             ),
                             comments = listOf(
-                                com.uniandes.vynilapp.data.remote.dto.CommentDto(100, "Excelente álbum", 5)
+                                com.uniandes.vynilapp.model.dto.CommentDto(100, "Excelente álbum", 5)
                             )
                         )
                         Response.success(albumDto)
                     }
                     101 -> {
-                        val albumDto = com.uniandes.vynilapp.data.remote.dto.AlbumDto(
+                        val albumDto = com.uniandes.vynilapp.model.dto.AlbumDto(
                             id = 101,
                             name = "Otro Álbum",
                             cover = "https://example.com/cover2.jpg",
@@ -82,10 +82,10 @@ object TestNetworkModule {
                 }
             }
 
-            override suspend fun getAllAlbums(): Response<List<com.uniandes.vynilapp.data.remote.dto.AlbumDto>> {
+            override suspend fun getAllAlbums(): Response<List<com.uniandes.vynilapp.model.dto.AlbumDto>> {
                 delay(100)
                 val albums = listOf(
-                    com.uniandes.vynilapp.data.remote.dto.AlbumDto(
+                    com.uniandes.vynilapp.model.dto.AlbumDto(
                         id = 100,
                         name = "Buscando América",
                         cover = "https://example.com/cover.jpg",
@@ -99,6 +99,24 @@ object TestNetworkModule {
                     )
                 )
                 return Response.success(albums)
+            }
+
+            override suspend fun createAlbum(album: com.uniandes.vynilapp.model.dto.AlbumDto): Response<com.uniandes.vynilapp.model.dto.AlbumDto> {
+                delay(100)
+                return Response.success(album)
+            }
+
+            override suspend fun updateAlbum(
+                albumId: Int,
+                album: com.uniandes.vynilapp.model.dto.AlbumDto
+            ): Response<com.uniandes.vynilapp.model.dto.AlbumDto> {
+                delay(100)
+                return Response.success(album)
+            }
+
+            override suspend fun deleteAlbum(albumId: Int): Response<Unit> {
+                delay(100)
+                return Response.success(Unit)
             }
         }
     }
