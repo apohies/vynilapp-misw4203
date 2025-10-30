@@ -1,15 +1,19 @@
 package com.uniandes.vynilapp
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.uniandes.vynilapp.ui.theme.VynilappTheme
 import com.uniandes.vynilapp.views.AlbumsScreen
+import com.uniandes.vynilapp.views.ArtistsScreen
+import com.uniandes.vynilapp.views.CollectionsScreen
+import com.uniandes.vynilapp.views.common.BottomNavigationBar
+import com.uniandes.vynilapp.views.common.NavigationItem
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,10 +23,35 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             VynilappTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
-                    AlbumsScreen(modifier = Modifier.padding(paddingValues))
-                }
+                MainScreen()
             }
+        }
+    }
+}
+
+@Composable
+fun MainScreen() {
+    var selectedTab by remember { mutableStateOf(NavigationItem.ALBUMS) }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            BottomNavigationBar(
+                selectedTab = selectedTab,
+                onTabSelected = { selectedTab = it }
+            )
+        }
+    ) { paddingValues ->
+        when (selectedTab) {
+            NavigationItem.ALBUMS -> AlbumsScreen(
+                modifier = Modifier.padding(paddingValues)
+            )
+            NavigationItem.ARTISTS -> ArtistsScreen(
+                modifier = Modifier.padding(paddingValues)
+            )
+            NavigationItem.COLLECTIONS -> CollectionsScreen(
+                modifier = Modifier.padding(paddingValues)
+            )
         }
     }
 }

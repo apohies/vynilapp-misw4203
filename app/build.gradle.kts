@@ -64,6 +64,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
+    // Icons library
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
     // OkHttp para logging (opcional pero útil)
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     
