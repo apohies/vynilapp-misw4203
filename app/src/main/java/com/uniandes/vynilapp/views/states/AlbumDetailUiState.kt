@@ -1,4 +1,4 @@
-package com.uniandes.vynilapp.views
+package com.uniandes.vynilapp.views.states
 
 import com.uniandes.vynilapp.model.Album
 import com.uniandes.vynilapp.model.Comment

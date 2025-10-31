@@ -6,16 +6,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,11 +29,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uniandes.vynilapp.ui.theme.VynilappTheme
 import com.uniandes.vynilapp.utils.DateUtils
 import com.uniandes.vynilapp.viewModels.albums.AlbumDetailViewModel
-import com.uniandes.vynilapp.views.AlbumDetailUiState
-import com.uniandes.vynilapp.views.AlbumDetailEvent
+import com.uniandes.vynilapp.views.states.AlbumDetailUiState
+import com.uniandes.vynilapp.views.states.AlbumDetailEvent
 import com.uniandes.vynilapp.model.Album
 import com.uniandes.vynilapp.model.Track
 import com.uniandes.vynilapp.model.Comment
+import com.uniandes.vynilapp.views.common.ErrorScreen
+import com.uniandes.vynilapp.views.common.LoadingScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -107,62 +105,6 @@ fun AlbumDetailScreen(
                     (context as? Activity)?.finish()
                 }
             )
-        }
-    }
-}
-
-@Composable
-fun LoadingScreen(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color(0xFF111120)),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularProgressIndicator(color = Color(0xFF9C27B0))
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Cargando álbum...",
-                color = Color.White,
-                fontSize = 16.sp
-            )
-        }
-    }
-}
-
-@Composable
-fun ErrorScreen(
-    error: String,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color(0xFF111120)),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = error,
-                color = Color.Red,
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = onRetry,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF9C27B0)
-                )
-            ) {
-                Text("Reintentar", color = Color.White)
-            }
         }
     }
 }

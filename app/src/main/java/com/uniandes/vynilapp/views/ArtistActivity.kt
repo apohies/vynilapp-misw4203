@@ -24,11 +24,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.uniandes.vynilapp.model.Musician
+import com.uniandes.vynilapp.model.Artist
 import com.uniandes.vynilapp.viewModels.artists.ArtistUiState
 import com.uniandes.vynilapp.viewModels.artists.ArtistsViewModel
-
-import android.util.Log
 @Composable
 fun ArtistsScreen(
     modifier: Modifier = Modifier,
@@ -65,7 +63,7 @@ fun ArtistsScreen(
 }
 
 @Composable
-fun ArtistsList(artists: List<Musician>) {
+fun ArtistsList(artists: List<Artist>) {
     val context = LocalContext.current
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         items(
@@ -77,7 +75,7 @@ fun ArtistsList(artists: List<Musician>) {
 }
 
 @Composable
-fun ArtistItem(artist: Musician) {
+fun ArtistItem(artist: Artist) {
     val albumCount = try { artist.albums?.size ?: 0 } catch (_: Exception) { 0 }
 
     Row(
@@ -92,7 +90,7 @@ fun ArtistItem(artist: Musician) {
             .clip(CircleShape)
             .border(1.dp, Color.Gray.copy(alpha = 0.3f), CircleShape)
 
-        if (artist.image.isNotBlank()) {
+        if (artist.image?.isNotBlank() == true) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(artist.image)

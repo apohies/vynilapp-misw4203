@@ -2,7 +2,7 @@ package com.uniandes.vynilapp.viewModels.artists
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uniandes.vynilapp.model.Musician
+import com.uniandes.vynilapp.model.Artist
 import com.uniandes.vynilapp.model.repository.ArtistRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -45,6 +45,6 @@ class ArtistsViewModel @Inject constructor(
 }
 sealed class ArtistUiState {
     object Loading : ArtistUiState()
-    data class Success(val artists: List<Musician>) : ArtistUiState()
+    data class Success(val artists: List<Artist>) : ArtistUiState()
     data class Error(val message: String) : ArtistUiState()
 }

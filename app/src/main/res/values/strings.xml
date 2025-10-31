@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Vynilapp</string>
+    <string name="artist_detail_title">Artista</string>
 </resources>
