@@ -4,6 +4,8 @@ import com.uniandes.vynilapp.model.network.RetrofitClient
 import com.uniandes.vynilapp.model.network.ApiService
 import com.uniandes.vynilapp.model.services.AlbumServiceAdapter
 import com.uniandes.vynilapp.model.repository.AlbumRepository
+import com.uniandes.vynilapp.model.repository.ArtistRepository
+import com.uniandes.vynilapp.model.services.ArtistServiceAdapter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,5 +32,17 @@ object NetworkModule {
     @Singleton
     fun provideAlbumRepository(albumServiceAdapter: AlbumServiceAdapter): AlbumRepository {
         return AlbumRepository(albumServiceAdapter)
+    }
+
+    @Provides
+    @Singleton
+    fun provideArtistServiceAdapter(apiService: ApiService): ArtistServiceAdapter {
+        return ArtistServiceAdapter(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideArtistRepository(artistServiceAdapter: ArtistServiceAdapter): ArtistRepository {
+        return ArtistRepository(artistServiceAdapter)
     }
 }
