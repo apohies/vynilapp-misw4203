@@ -33,6 +33,10 @@ interface ApiService {
     suspend fun deleteAlbum(@Path("id") albumId: Int): Response<Unit>
 
     // ============== ARTISTS ===============
+    @GET(ApiConfig.ARTIST_ENDPOINT)
+    suspend fun getAllArtists(): Response<List<ArtistDto>>
+
+
     @GET(ApiConfig.ARTIST_DETAIL_ENDPOINT)
     suspend fun getArtistById(@Path("id") artistId: Int): Response<ArtistDto>
 }

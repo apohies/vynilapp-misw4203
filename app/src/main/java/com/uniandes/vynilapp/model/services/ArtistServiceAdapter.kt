@@ -11,6 +11,29 @@ import com.uniandes.vynilapp.model.network.ApiService
 class ArtistServiceAdapter(
     private val apiService: ApiService
 ) {
+    suspend fun getAllArtists(): Result<List<Artist>> {
+        return try {
+            val response = apiService.getAllArtists()
+
+            if (response.isSuccessful && response.body() != null) {
+                val artistsDto = response.body()!!
+                val artists = artistsDto.map { artistDto -> convertToArtist(artistDto) }
+                Result.success(artists)
+            } else if (response.isSuccessful && response.body() == null) {
+                Result.failure(
+                    Exception("Error obtaining artists, empty response")
+                )
+            } else {
+                Result.failure(
+                    Exception("Error obtaining artists: ${response.code()} - ${response.message()}")
+                )
+            }
+        } catch (e: Exception) {
+            Result.failure(
+                Exception("Network error: ${e.message}")
+            )
+        }
+    }
     suspend fun getArtistById(artistId: Int): Result<Artist> {
         return try {
             val response = apiService.getArtistById(artistId)

@@ -7,6 +7,11 @@ import javax.inject.Inject
 class ArtistRepository @Inject constructor(
     private val artistServiceAdapter: ArtistServiceAdapter
 ) {
+
+    suspend fun getAllArtists(): Result<List<Artist>> {
+        return artistServiceAdapter.getAllArtists();
+    }
+
     suspend fun getArtistById(artistId: Int): Result<Artist> {
         return artistServiceAdapter.getArtistById(artistId)
     }
