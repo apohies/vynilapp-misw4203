@@ -10,6 +10,8 @@ object ApiConfig {
     
     const val ALBUMS_ENDPOINT = "albums"
     const val ALBUM_DETAIL_ENDPOINT = "albums/{id}"
+
+    const val MUSICIANS_ENDPOINT = "musicians"
     
     const val CONNECT_TIMEOUT_SECONDS = 30L
     const val READ_TIMEOUT_SECONDS = 30L

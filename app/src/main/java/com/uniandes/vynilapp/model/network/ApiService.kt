@@ -1,6 +1,7 @@
 package com.uniandes.vynilapp.model.network
 
 import com.uniandes.vynilapp.model.dto.AlbumDto
+import com.uniandes.vynilapp.model.dto.MusicianDto
 import com.uniandes.vynilapp.utils.ApiConfig
 import retrofit2.Response
 import retrofit2.http.Body
@@ -30,4 +31,7 @@ interface ApiService {
 
     @DELETE(ApiConfig.ALBUM_DETAIL_ENDPOINT)
     suspend fun deleteAlbum(@Path("id") albumId: Int): Response<Unit>
+
+    @GET(ApiConfig.MUSICIANS_ENDPOINT)
+    suspend fun getAllMusicians(): Response<List<MusicianDto>>
 }
