@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Vynilapp</string>
     <string name="artist_detail_title">Artista</string>
+    <string name="artist_album_title">Discrografía</string>
+    <string name="artist_description_title">Biografia</string>
+    <string name="artist_additional_info_birth_date">Fecha de nacimiento</string>
+    <string name="artist_additional_info_popularity">Popularity</string>
 </resources>
