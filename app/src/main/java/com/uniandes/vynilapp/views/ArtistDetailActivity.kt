@@ -36,9 +36,15 @@ import com.uniandes.vynilapp.utils.DateUtils
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.font.FontStyle
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.uniandes.vynilapp.model.ArtistAlbum
+import com.uniandes.vynilapp.utils.NetworkUtils
+import com.uniandes.vynilapp.views.common.OfflineErrorScreen
 
 @Composable
 fun ArtistDetailScreen(
@@ -48,6 +54,7 @@ fun ArtistDetailScreen(
     viewModel: ArtistDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(artistId) {
         viewModel.onEvent(ArtistDetailEvent.LoadArtistById(artistId))
@@ -59,11 +66,21 @@ fun ArtistDetailScreen(
         }
         uiState.error != null -> {
             val errorMessage = uiState.error ?: "Error desconocido"
-            ErrorScreen(
-                error = errorMessage,
-                onRetry = { viewModel.onEvent(ArtistDetailEvent.LoadArtistById(artistId)) },
-                modifier = modifier
-            )
+            var isOnline by remember { mutableStateOf(NetworkUtils.isNetworkAvailable(context)) }
+
+            if (!isOnline) {
+                OfflineErrorScreen(
+                    onRetry = {
+                        isOnline = NetworkUtils.isNetworkAvailable(context)
+                    }
+                )
+            } else {
+                ErrorScreen(
+                    error = errorMessage,
+                    onRetry = { viewModel.onEvent(ArtistDetailEvent.LoadArtistById(artistId)) },
+                    modifier = modifier
+                )
+            }
         }
         else -> {
             ArtistDetailContent(
@@ -277,7 +294,7 @@ fun ArtistAlbums(
                 text = "No albums available",
                 color = Color.Gray,
                 fontSize = 14.sp,
-                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                fontStyle = FontStyle.Italic
             )
         }
     } else {
