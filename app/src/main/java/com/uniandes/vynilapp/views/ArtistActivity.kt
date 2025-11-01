@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +51,8 @@ fun ArtistsScreen(
         )
     }else{
         val uiState by artistViewModel.uiState.collectAsStateWithLifecycle()
+        val query by artistViewModel.searchQuery.collectAsStateWithLifecycle()
+        val filtered by artistViewModel.filteredArtists.collectAsStateWithLifecycle()
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -64,13 +67,24 @@ fun ArtistsScreen(
                 }
 
                 is ArtistUiState.Success -> {
-                    val artists = (uiState as ArtistUiState.Success).artists
-                    ArtistsList(
-                        artists = artists,
-                        onArtistClick = { artist: Artist ->
-                            selectedArtist = ArtistSelection(artist.id, artist.name)
-                        }
-                    )
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        OutlinedTextField(
+                            value = query,
+                            onValueChange = { artistViewModel.setSearchQuery(it.trimStart().trimEnd()) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            placeholder = { Text("Search artists") },
+                            singleLine = true
+                        )
+
+                        ArtistsList(
+                            artists = filtered,
+                            onArtistClick = { artist: Artist ->
+                                selectedArtist = ArtistSelection(artist.id, artist.name)
+                            }
+                        )
+                    }
                 }
 
                 is ArtistUiState.Error -> {
