@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.platform.LocalContext
 import android.app.Activity
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,8 +35,10 @@ import com.uniandes.vynilapp.views.states.AlbumDetailEvent
 import com.uniandes.vynilapp.model.Album
 import com.uniandes.vynilapp.model.Track
 import com.uniandes.vynilapp.model.Comment
+import com.uniandes.vynilapp.utils.NetworkUtils
 import com.uniandes.vynilapp.views.common.ErrorScreen
 import com.uniandes.vynilapp.views.common.LoadingScreen
+import com.uniandes.vynilapp.views.common.OfflineErrorScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -90,11 +93,20 @@ fun AlbumDetailScreen(
         }
         uiState.error != null -> {
             val errorMessage = uiState.error ?: "Error desconocido"
-            ErrorScreen(
-                error = errorMessage,
-                onRetry = { viewModel.onEvent(AlbumDetailEvent.LoadAlbumById(albumId)) },
-                modifier = modifier
-            )
+            var isOnline by remember { mutableStateOf(NetworkUtils.isNetworkAvailable(context)) }
+            if (!isOnline) {
+                OfflineErrorScreen(
+                    onRetry = {
+                        isOnline = NetworkUtils.isNetworkAvailable(context)
+                    }
+                )
+            } else {
+                ErrorScreen(
+                    error = errorMessage,
+                    onRetry = { viewModel.onEvent(AlbumDetailEvent.LoadAlbumById(albumId)) },
+                    modifier = modifier
+                )
+            }
         }
         else -> {
             AlbumDetailContent(
