@@ -154,7 +154,7 @@ class ArtistServiceAdapterTest {
     }
 
     @Test
-    fun `getArtists should return success when API call is successful`() = runBlocking {
+    fun `getAllArtists should return success when API call is successful`() = runBlocking {
 
         val artistId = 1
         val artistsDtos = getArtistsMocks()
@@ -191,6 +191,39 @@ class ArtistServiceAdapterTest {
 
         // Verify API call
         coVerify { apiService.getAllArtists() }
+    }
+
+    @Test
+    fun `getAllArtists should return failure when API call fails`() = runBlocking {
+        // Arrange
+        val artistId = 100
+        val response = Response.error<List<ArtistDto>>(404, "Not Found".toResponseBody())
+
+        coEvery { apiService.getAllArtists() } returns response
+
+        // Act
+        val result = artistServiceAdapter.getAllArtists()
+
+        // Assert
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull()?.message?.contains("404") == true)
+        coVerify(exactly = 1) { apiService.getAllArtists() }
+    }
+
+    @Test
+    fun `getAllArtists should return failure when exception occurs`() = runBlocking {
+        // Arrange
+        val artistId = 100
+
+        coEvery { apiService.getAllArtists() } throws Exception("Network error")
+
+        // Act
+        val result = artistServiceAdapter.getAllArtists()
+
+        // Assert
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull()?.message?.contains("Network error") == true)
+        coVerify(exactly = 1) { apiService.getAllArtists() }
     }
 
     private fun getArtistsMocks(): List<ArtistDto> {
