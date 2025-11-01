@@ -9,10 +9,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/**
- * Pruebas de UI Espresso para AlbumsActivity
- * Verifica la funcionalidad de obtener y mostrar todos los álbumes
- */
+
+
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class AlbumsActivityEspressoTest {

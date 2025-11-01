@@ -11,10 +11,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/**
- * Pruebas de estados de AlbumsActivity
- * Verifica el comportamiento de la UI según diferentes estados
- */
+
 @RunWith(AndroidJUnit4::class)
 class ActivityState {
 
@@ -27,7 +24,7 @@ class ActivityState {
             LoadingContent()
         }
 
-        // Verificar que se muestra el CircularProgressIndicator
+
         composeTestRule.onNode(
             hasContentDescription("Loading") or hasTestTag("loading_indicator")
         ).assertExists()
@@ -66,7 +63,7 @@ class ActivityState {
             AlbumsGrid(albums = testAlbums)
         }
 
-        // Verificar que ambos álbumes se muestran
+
         composeTestRule.onNodeWithText("Album 1").assertExists()
         composeTestRule.onNodeWithText("Album 2").assertExists()
     }
@@ -77,7 +74,7 @@ class ActivityState {
             AlbumsGrid(albums = emptyList())
         }
 
-        // Verificar que no hay álbumes
+
         composeTestRule.onAllNodes(hasClickAction())
             .assertCountEquals(0)
     }
@@ -93,10 +90,10 @@ class ActivityState {
             )
         }
 
-        // Verificar que se muestra el mensaje de error
+
         composeTestRule.onNodeWithText(errorMessage).assertExists()
 
-        // Verificar que existe el botón de reintentar
+
         composeTestRule.onNodeWithText("Reintentar").assertExists()
     }
 
@@ -111,10 +108,10 @@ class ActivityState {
             )
         }
 
-        // Hacer click en reintentar
+
         composeTestRule.onNodeWithText("Reintentar").performClick()
 
-        // Verificar que se llamó la función onRetry
+
         assert(retryCount == 1) { "Retry should be called once" }
     }
 
@@ -135,7 +132,7 @@ class ActivityState {
             hasContentDescription("Loading") or hasTestTag("loading_indicator")
         ).assertExists()
 
-        // Simular transición a éxito
+
         showLoading = false
         composeTestRule.waitForIdle()
     }
