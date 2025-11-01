@@ -2,6 +2,9 @@ package com.uniandes.vynilapp.views
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,6 +26,22 @@ import com.uniandes.vynilapp.views.common.AlbumCard
 import com.uniandes.vynilapp.views.common.SearchBar
 import com.uniandes.vynilapp.viewModels.albums.AlbumsViewModel
 import com.uniandes.vynilapp.viewModels.albums.AlbumsUiState
+import dagger.hilt.android.AndroidEntryPoint
+
+/**
+ * Activity principal para mostrar la lista de álbumes
+ */
+@AndroidEntryPoint
+class AlbumsActivity : ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setContent {
+            AlbumsScreen()
+        }
+    }
+}
 
 @Composable
 fun AlbumsScreen(
@@ -93,7 +112,7 @@ fun LoadingContent() {
 @Composable
 fun AlbumsGrid(albums: List<Album>) {
     val context = LocalContext.current
-    
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(vertical = 8.dp),
