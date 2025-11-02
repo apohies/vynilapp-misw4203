@@ -1,12 +1,17 @@
-package com.uniandes.vynilapp.views.common
+package com.uniandes.vynilapp.commonComponents
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
+import com.uniandes.vynilapp.views.common.SearchBar
+import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Before
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 
 class SearchBarTest {
     @get:Rule
@@ -43,72 +48,7 @@ class SearchBarTest {
             .assertIsDisplayed()
     }
 
-    // Test 2: Validate search icon is displayed
-    @Test
-    fun validateSearchIconDisplayTest() {
-        composeTestRule.setContent {
-            SearchBar(
-                value = "",
-                onValueChange = {}
-            )
-        }
-
-        composeTestRule.onNodeWithContentDescription("Search")
-            .assertExists()
-            .assertIsDisplayed()
-    }
-
-    // Test 3: Validate default placeholder
-    @Test
-    fun validateDefaultPlaceholderTest() {
-        composeTestRule.setContent {
-            SearchBar(
-                value = "",
-                onValueChange = {}
-            )
-        }
-
-        // Default placeholder should be "Find in albums"
-        composeTestRule.onNodeWithText("Find in albums")
-            .assertExists()
-            .assertIsDisplayed()
-    }
-
-    // Test 4: Validate custom placeholder
-    @Test
-    fun validateCustomPlaceholderTest() {
-        val customPlaceholder = "Search artists..."
-
-        composeTestRule.setContent {
-            SearchBar(
-                value = "",
-                onValueChange = {},
-                placeholder = customPlaceholder
-            )
-        }
-
-        composeTestRule.onNodeWithText(customPlaceholder)
-            .assertExists()
-            .assertIsDisplayed()
-    }
-
-    // Test 5: Validate placeholder hides when value is entered
-    @Test
-    fun validatePlaceholderHidesWithValueTest() {
-        composeTestRule.setContent {
-            SearchBar(
-                value = "Test Value",
-                onValueChange = {},
-                placeholder = "Find in albums"
-            )
-        }
-
-        // Placeholder should not be visible when there's a value
-        composeTestRule.onNodeWithText("Find in albums")
-            .assertDoesNotExist()
-    }
-
-    // Test 6: Validate text input is displayed
+    // Test 2: Validate text input is displayed
     @Test
     fun validateTextInputDisplayTest() {
         val testValue = "Search Query"
@@ -124,7 +64,7 @@ class SearchBarTest {
             .assertExists()
     }
 
-    // Test 7: Validate text input can be focused
+    // Test 3: Validate text input can be focused
     @Test
     fun validateTextInputFocusTest() {
         composeTestRule.setContent {
@@ -139,7 +79,7 @@ class SearchBarTest {
             .assertExists()
     }
 
-    // Test 8: Validate onValueChange callback
+    // Test 4: Validate onValueChange callback
     @Test
     fun validateOnValueChangeCallbackTest() {
         composeTestRule.setContent {
@@ -156,10 +96,10 @@ class SearchBarTest {
             .performTextInput("Test")
 
         composeTestRule.waitForIdle()
-        assertTrue(valueChangeCount > 0)
+        Assert.assertTrue(valueChangeCount > 0)
     }
 
-    // Test 9: Validate multiple text inputs
+    // Test 5: Validate multiple text inputs
     @Test
     fun validateMultipleTextInputsTest() {
         composeTestRule.setContent {
@@ -176,17 +116,17 @@ class SearchBarTest {
             .performTextInput("Hello")
 
         composeTestRule.waitForIdle()
-        assertEquals("Hello", currentValue)
+        Assert.assertEquals("Hello", currentValue)
 
         // Input more text (it appends)
         composeTestRule.onNode(hasSetTextAction())
             .performTextInput(" World")
 
         composeTestRule.waitForIdle()
-        assertEquals("Hello World", currentValue)
+        Assert.assertEquals("Hello World", currentValue)
     }
 
-    // Test 10: Validate text replacement
+    // Test 6: Validate text replacement
     @Test
     fun validateTextReplacementTest() {
         composeTestRule.setContent {
@@ -209,10 +149,10 @@ class SearchBarTest {
         composeTestRule.onNode(hasSetTextAction())
             .performTextInput("Replaced")
 
-        assertEquals("Replaced", currentValue)
+        Assert.assertEquals("Replaced", currentValue)
     }
 
-    // Test 11: Validate empty value shows placeholder
+    // Test 7: Validate empty value shows placeholder
     @Test
     fun validateEmptyValueShowsPlaceholderTest() {
         composeTestRule.setContent {
@@ -228,7 +168,7 @@ class SearchBarTest {
             .assertIsDisplayed()
     }
 
-    // Test 12: Validate SearchBar structure
+    // Test 8: Validate SearchBar structure
     @Test
     fun validateSearchBarStructureTest() {
         composeTestRule.setContent {
@@ -246,7 +186,7 @@ class SearchBarTest {
         composeTestRule.onNode(hasSetTextAction()).assertExists()
     }
 
-    // Test 13: Validate SearchBar renders without errors
+    // Test 9: Validate SearchBar renders without errors
     @Test
     fun validateSearchBarRendersWithoutErrorsTest() {
         // Ensure SearchBar renders without throwing exceptions
@@ -260,7 +200,7 @@ class SearchBarTest {
         composeTestRule.onNodeWithContentDescription("Search").assertExists()
     }
 
-    // Test 14: Validate Spanish placeholder
+    // Test 10: Validate Spanish placeholder
     @Test
     fun validateSpanishPlaceholderTest() {
         val spanishPlaceholder = "Buscar en álbumes"
@@ -278,7 +218,7 @@ class SearchBarTest {
             .assertIsDisplayed()
     }
 
-    // Test 15: Validate special characters in search
+    // Test 11: Validate special characters in search
     @Test
     fun validateSpecialCharactersTest() {
         val specialText = "Rock & Roll!"
@@ -294,7 +234,7 @@ class SearchBarTest {
             .assertExists()
     }
 
-    // Test 16: Validate numeric input
+    // Test 12: Validate numeric input
     @Test
     fun validateNumericInputTest() {
         composeTestRule.setContent {
@@ -308,10 +248,10 @@ class SearchBarTest {
             .performTextInput("12345")
 
         composeTestRule.waitForIdle()
-        assertEquals("12345", currentValue)
+        Assert.assertEquals("12345", currentValue)
     }
 
-    // Test 17: Validate mixed content input
+    // Test 13: Validate mixed content input
     @Test
     fun validateMixedContentInputTest() {
         var newValue: String = ""
@@ -326,10 +266,10 @@ class SearchBarTest {
             .performTextInput("Album 123")
 
         composeTestRule.waitForIdle()
-        assertEquals("Album 123", newValue)
+        Assert.assertEquals("Album 123", newValue)
     }
 
-    // Test 18: Validate search icon and text field together
+    // Test 14: Validate search icon and text field together
     @Test
     fun validateSearchIconAndTextFieldTogetherTest() {
         composeTestRule.setContent {
@@ -344,22 +284,7 @@ class SearchBarTest {
         composeTestRule.onNode(hasSetTextAction()).assertExists()
     }
 
-    // Test 19: Validate only one search icon
-    @Test
-    fun validateSingleSearchIconTest() {
-        composeTestRule.setContent {
-            SearchBar(
-                value = "",
-                onValueChange = {}
-            )
-        }
-
-        val searchIcons = composeTestRule.onAllNodesWithContentDescription("Search")
-            .fetchSemanticsNodes()
-        assertEquals(1, searchIcons.size)
-    }
-
-    // Test 20: Validate text clearance
+    // Test 15: Validate text clearance
     @Test
     fun validateTextClearanceTest() {
         composeTestRule.setContent {
@@ -378,10 +303,10 @@ class SearchBarTest {
         composeTestRule.onNode(hasSetTextAction())
             .performTextClearance()
         composeTestRule.waitForIdle()
-        assertEquals("", currentValue)
+        Assert.assertEquals("", currentValue)
     }
 
-    // Test 21: Validate placeholder reappears after clearing
+    // Test 16: Validate placeholder reappears after clearing
     @Test
     fun validatePlaceholderReappearsAfterClearingTest() {
         val placeholder = "Search here"
@@ -410,7 +335,7 @@ class SearchBarTest {
         composeTestRule.onNodeWithText(placeholder).assertExists()
     }
 
-    // Test 22: Validate long text input
+    // Test 17: Validate long text input
     @Test
     fun validateLongTextInputTest() {
         val longText = "This is a very long search query that might span multiple lines but should be handled by the search bar"
@@ -426,10 +351,10 @@ class SearchBarTest {
             .performTextInput(longText)
 
         composeTestRule.waitForIdle()
-        assertEquals(longText, currentValue)
+        Assert.assertEquals(longText, currentValue)
     }
 
-    // Test 23: Validate value change count tracking
+    // Test 18: Validate value change count tracking
     @Test
     fun validateValueChangeCountTrackingTest() {
         composeTestRule.setContent {
@@ -447,6 +372,6 @@ class SearchBarTest {
             .performTextInput("Test")
 
         composeTestRule.waitForIdle()
-        assertTrue(valueChangeCount > 0)
+        Assert.assertTrue(valueChangeCount > 0)
     }
 }

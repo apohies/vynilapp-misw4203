@@ -1,16 +1,25 @@
-package com.uniandes.vynilapp.views
+package com.uniandes.vynilapp.components
 
-import androidx.compose.ui.test.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.uniandes.vynilapp.model.Artist
 import com.uniandes.vynilapp.model.ArtistAlbum
+import com.uniandes.vynilapp.views.AlbumCard
+import com.uniandes.vynilapp.views.ArtistAlbums
+import com.uniandes.vynilapp.views.ArtistAvatar
+import com.uniandes.vynilapp.views.ArtistAvatarPlaceHolder
+import com.uniandes.vynilapp.views.ArtistDetailContent
+import com.uniandes.vynilapp.views.ArtistInfoRow
 import com.uniandes.vynilapp.views.states.ArtistDetailEvent
 import com.uniandes.vynilapp.views.states.ArtistDetailUiState
+import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Before
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 
 class ArtistDetailScreenTest {
     @get:Rule
@@ -170,8 +179,8 @@ class ArtistDetailScreenTest {
         composeTestRule.onNodeWithContentDescription("Back").performClick()
         composeTestRule.waitForIdle()
 
-        assertTrue(backClicked)
-        assertEquals(1, backClickCount)
+        Assert.assertTrue(backClicked)
+        Assert.assertEquals(1, backClickCount)
     }
 
     // Test 5: Validate albums are displayed
@@ -210,7 +219,7 @@ class ArtistDetailScreenTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertEquals(1, albumClickedId)
+        Assert.assertEquals(1, albumClickedId)
     }
 
     // Test 7: Validate multiple album clicks
@@ -233,7 +242,7 @@ class ArtistDetailScreenTest {
         composeTestRule.onNodeWithText("Siembra").performClick()
         composeTestRule.waitForIdle()
 
-        assertEquals(listOf(1, 2), clickedAlbums)
+        Assert.assertEquals(listOf(1, 2), clickedAlbums)
     }
 
     // Test 8: Validate artist info rows are displayed
@@ -349,7 +358,7 @@ class ArtistDetailScreenTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertTrue(clicked)
+        Assert.assertTrue(clicked)
     }
 
     // Test 16: Validate ArtistAlbums displays album section title
@@ -454,7 +463,7 @@ class ArtistDetailScreenTest {
     @Test
     fun validateMultipleArtistInfoRowsTest() {
         composeTestRule.setContent {
-            androidx.compose.foundation.layout.Column {
+            Column {
                 ArtistInfoRow(label = "Birth Date", value = "1948")
                 ArtistInfoRow(label = "Genre", value = "Salsa")
                 ArtistInfoRow(label = "Country", value = "Panama")
@@ -514,7 +523,7 @@ class ArtistDetailScreenTest {
         }
 
         composeTestRule.waitForIdle()
-        assertEquals(5, backClickCount)
+        Assert.assertEquals(5, backClickCount)
     }
 
     // Test 26: Validate artist with no description
@@ -602,7 +611,7 @@ class ArtistDetailScreenTest {
         }
 
         composeTestRule.waitForIdle()
-        assertEquals(10, clickCount)
+        Assert.assertEquals(10, clickCount)
     }
 
     // Test 31: Validate ArtistDetailContent with null artist name
@@ -646,7 +655,7 @@ class ArtistDetailScreenTest {
         composeTestRule.onNodeWithContentDescription("Back").performClick()
         composeTestRule.waitForIdle()
 
-        assertTrue(backClicked)
+        Assert.assertTrue(backClicked)
     }
 
     // Test 33: Validate ArtistInfoRow with long label

@@ -1,19 +1,28 @@
-package com.uniandes.vynilapp.views
+package com.uniandes.vynilapp.components
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import com.uniandes.vynilapp.model.Album
 import com.uniandes.vynilapp.model.Comment
 import com.uniandes.vynilapp.model.Performer
 import com.uniandes.vynilapp.model.Track
+import com.uniandes.vynilapp.views.AlbumDetailContent
+import com.uniandes.vynilapp.views.AlbumHeader
+import com.uniandes.vynilapp.views.CommentItem
+import com.uniandes.vynilapp.views.CommentsSection
+import com.uniandes.vynilapp.views.SongItem
+import com.uniandes.vynilapp.views.SongsSection
 import com.uniandes.vynilapp.views.states.AlbumDetailEvent
 import com.uniandes.vynilapp.views.states.AlbumDetailUiState
+import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Before
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Assert.assertFalse
 
 class AlbumDetailActivityTest {
     @get:Rule
@@ -166,7 +175,7 @@ class AlbumDetailActivityTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertEquals(1, backClickCount)
+        Assert.assertEquals(1, backClickCount)
     }
 
     // Test 5: Validate TopBar title
@@ -222,7 +231,7 @@ class AlbumDetailActivityTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertEquals(1, playClickCount)
+        Assert.assertEquals(1, playClickCount)
     }
 
     // Test 8: Validate pause button when playing
@@ -245,7 +254,7 @@ class AlbumDetailActivityTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertEquals(1, playClickCount)
+        Assert.assertEquals(1, playClickCount)
     }
 
     // Test 9: Validate like button
@@ -267,7 +276,7 @@ class AlbumDetailActivityTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertEquals(1, likeClickCount)
+        Assert.assertEquals(1, likeClickCount)
     }
 
     // Test 10: Validate save button
@@ -289,7 +298,7 @@ class AlbumDetailActivityTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertEquals(1, saveClickCount)
+        Assert.assertEquals(1, saveClickCount)
     }
 
     // Test 11: Validate share button
@@ -311,7 +320,7 @@ class AlbumDetailActivityTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertEquals(1, shareClickCount)
+        Assert.assertEquals(1, shareClickCount)
     }
 
     // ==================== SongsSection Tests ====================
@@ -407,7 +416,7 @@ class AlbumDetailActivityTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertTrue(trackAdded)
+        Assert.assertTrue(trackAdded)
     }
 
     // Test 18: Validate empty tracks list
@@ -493,7 +502,7 @@ class AlbumDetailActivityTest {
         composeTestRule.onNode(hasSetTextAction())
             .performTextInput("Great album!")
 
-        assertEquals("Great album!", commentText)
+        Assert.assertEquals("Great album!", commentText)
     }
 
     // Test 23: Validate send comment button
@@ -530,7 +539,7 @@ class AlbumDetailActivityTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertEquals("My comment", sentComment)
+        Assert.assertEquals("My comment", sentComment)
     }
 
     // Test 25: Validate empty comments list
@@ -585,10 +594,10 @@ class AlbumDetailActivityTest {
         composeTestRule.onNodeWithContentDescription("Compartir").performClick()
 
         composeTestRule.waitForIdle()
-        assertEquals(3, eventList.size)
-        assertTrue(eventList[0] is AlbumDetailEvent.ToggleLike)
-        assertTrue(eventList[1] is AlbumDetailEvent.ToggleSave)
-        assertTrue(eventList[2] is AlbumDetailEvent.ShareAlbum)
+        Assert.assertEquals(3, eventList.size)
+        Assert.assertTrue(eventList[0] is AlbumDetailEvent.ToggleLike)
+        Assert.assertTrue(eventList[1] is AlbumDetailEvent.ToggleSave)
+        Assert.assertTrue(eventList[2] is AlbumDetailEvent.ShareAlbum)
     }
 
     // Test 28: Validate play/pause toggle
@@ -610,7 +619,7 @@ class AlbumDetailActivityTest {
             )
         }
 
-        assertFalse(isPlaying)
+        Assert.assertFalse(isPlaying)
 
         composeTestRule.onNodeWithContentDescription("Reproducir").performClick()
         composeTestRule.waitForIdle()
@@ -757,7 +766,7 @@ class AlbumDetailActivityTest {
         }
 
         composeTestRule.waitForIdle()
-        assertEquals(5, eventList.filter { it is AlbumDetailEvent.ToggleLike }.size)
+        Assert.assertEquals(5, eventList.filter { it is AlbumDetailEvent.ToggleLike }.size)
     }
 
     // Test 36: Validate back button multiple clicks
@@ -776,7 +785,7 @@ class AlbumDetailActivityTest {
         }
 
         composeTestRule.waitForIdle()
-        assertEquals(3, backClickCount)
+        Assert.assertEquals(3, backClickCount)
     }
 
     // Test 37: Validate SongItem component
@@ -864,8 +873,8 @@ class AlbumDetailActivityTest {
         composeTestRule.waitForIdle()
 
         // Verify interactions
-        assertTrue(eventList.any { it is AlbumDetailEvent.PlayAlbum })
-        assertTrue(eventList.any { it is AlbumDetailEvent.ToggleLike })
-        assertEquals(1, backClickCount)
+        Assert.assertTrue(eventList.any { it is AlbumDetailEvent.PlayAlbum })
+        Assert.assertTrue(eventList.any { it is AlbumDetailEvent.ToggleLike })
+        Assert.assertEquals(1, backClickCount)
     }
 }

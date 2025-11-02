@@ -1,11 +1,12 @@
-package com.uniandes.vynilapp.views
+package com.uniandes.vynilapp.components
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.uniandes.vynilapp.model.Album
 import com.uniandes.vynilapp.model.Performer
-import com.uniandes.vynilapp.model.Track
-import com.uniandes.vynilapp.model.Comment
+import com.uniandes.vynilapp.views.AlbumsGrid
+import com.uniandes.vynilapp.views.ErrorContent
+import com.uniandes.vynilapp.views.LoadingContent
 import org.junit.Rule
 import org.junit.Test
 import org.junit.Before

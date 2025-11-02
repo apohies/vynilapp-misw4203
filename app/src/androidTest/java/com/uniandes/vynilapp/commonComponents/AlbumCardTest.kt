@@ -1,12 +1,17 @@
-package com.uniandes.vynilapp.views.common
+package com.uniandes.vynilapp.commonComponents
 
-import androidx.compose.ui.test.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.uniandes.vynilapp.views.common.AlbumCard
+import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Before
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 
 class AlbumCardTest {
     @get:Rule
@@ -138,8 +143,8 @@ class AlbumCardTest {
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertTrue(cardClicked)
-        assertEquals(1, clickCount)
+        Assert.assertTrue(cardClicked)
+        Assert.assertEquals(1, clickCount)
     }
 
     // Test 7: Validate multiple card clicks
@@ -161,7 +166,7 @@ class AlbumCardTest {
         }
 
         composeTestRule.waitForIdle()
-        assertEquals(3, clickCount)
+        Assert.assertEquals(3, clickCount)
     }
 
     // Test 8: Validate long album title
@@ -268,7 +273,7 @@ class AlbumCardTest {
     @Test
     fun validateMultipleCardsTest() {
         composeTestRule.setContent {
-            androidx.compose.foundation.layout.Row {
+            Row {
                 AlbumCard(
                     albumTitle = "Album 1",
                     artistName = "Artist 1",
@@ -316,13 +321,13 @@ class AlbumCardTest {
             )
         }
 
-        assertEquals("", selectedAlbum)
+        Assert.assertEquals("", selectedAlbum)
 
         composeTestRule.onNodeWithText("Selected Album")
             .performClick()
 
         composeTestRule.waitForIdle()
-        assertEquals("Selected Album", selectedAlbum)
+        Assert.assertEquals("Selected Album", selectedAlbum)
     }
 
     // Test 17: Validate default onClick does nothing
@@ -362,7 +367,7 @@ class AlbumCardTest {
         }
 
         composeTestRule.waitForIdle()
-        assertEquals(10, clickCount)
+        Assert.assertEquals(10, clickCount)
     }
 
     // Test 19: Validate both text elements visible together
@@ -445,10 +450,10 @@ class AlbumCardTest {
 
         composeTestRule.onNodeWithText("Sequence Test").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(listOf(1), clickSequence)
+        Assert.assertEquals(listOf(1), clickSequence)
 
         composeTestRule.onNodeWithText("Sequence Test").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(listOf(1, 2), clickSequence)
+        Assert.assertEquals(listOf(1, 2), clickSequence)
     }
 }

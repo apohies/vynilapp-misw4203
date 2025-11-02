@@ -6,8 +6,20 @@
 ```cmd
 ./gradlew test
 ```
-### Correr Expresso Test
+### Correr Test de integracion
 
 ```cmd
-./gradlew assembleDebugAndroidTest
+./gradlew :app:connectedDebugAndroidTest
+```
+
+### Build an apk
+
+```cmd
+./gradlew assembleDebug
+```
+
+#### APK location:
+
+```cmd
+app/build/outputs/apk/debug/app-debug.apk
 ```

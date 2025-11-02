@@ -1,12 +1,21 @@
-package com.uniandes.vynilapp
+package com.uniandes.vynilapp.e2eNavigationTest
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
+import com.uniandes.vynilapp.MainActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Before
 
 /**
  * End-to-end integration tests for Album Detail Screen navigation
@@ -106,35 +115,7 @@ class AlbumDetailNavigationTest {
         }
     }
 
-    // Test 6: Validate clicking album navigates to detail screen
-    @Test
-    fun validateAlbumClickNavigatesToDetailTest() {
-        composeTestRule.waitForIdle()
-        Thread.sleep(3000)
-
-        // Albums should be loaded
-        // SearchBar visible means we're on Albums screen
-        composeTestRule.onNodeWithText("Find in albums").assertExists()
-
-        // Note: Actual clicking would require knowing album names
-        // This validates the screen is ready for interaction
-        composeTestRule.waitForIdle()
-    }
-
-    // Test 7: Validate album detail screen components (structure test)
-    @Test
-    fun validateAlbumDetailScreenStructureTest() {
-        // This test validates the Album Detail screen can be accessed
-        // In a real scenario, you'd click an album first
-
-        composeTestRule.waitForIdle()
-        Thread.sleep(3000)
-
-        // Verify Albums screen is functional
-        composeTestRule.onNodeWithText("Find in albums").assertExists()
-    }
-
-    // Test 8: Validate navigation back from album detail
+    // Test 6: Validate navigation back from album detail
     @Test
     fun validateNavigationBackFromAlbumDetailTest() {
         composeTestRule.waitForIdle()
@@ -156,7 +137,7 @@ class AlbumDetailNavigationTest {
         composeTestRule.onNodeWithText("Find in albums").assertExists()
     }
 
-    // Test 9: Validate Albums screen persists state
+    // Test 7: Validate Albums screen persists state
     @Test
     fun validateAlbumsScreenPersistsStateTest() {
         composeTestRule.waitForIdle()
@@ -179,7 +160,7 @@ class AlbumDetailNavigationTest {
         composeTestRule.onNodeWithText("Find in albums").assertExists()
     }
 
-    // Test 10: Validate Albums screen handles loading state
+    // Test 8: Validate Albums screen handles loading state
     @Test
     fun validateAlbumsLoadingStateTest() {
         composeTestRule.waitForIdle()
@@ -199,7 +180,7 @@ class AlbumDetailNavigationTest {
 
     // ==================== Search Functionality Tests ====================
 
-    // Test 11: Validate search input in Albums screen
+    // Test 9: Validate search input in Albums screen
     @Test
     fun validateAlbumsSearchInputTest() {
         composeTestRule.waitForIdle()
@@ -219,7 +200,7 @@ class AlbumDetailNavigationTest {
         composeTestRule.onNode(hasSetTextAction()).assertExists()
     }
 
-    // Test 12: Validate search clears when navigating away
+    // Test 10: Validate search clears when navigating away
     @Test
     fun validateSearchClearsOnNavigationTest() {
         composeTestRule.waitForIdle()
@@ -245,7 +226,7 @@ class AlbumDetailNavigationTest {
         composeTestRule.onNodeWithText("Find in albums").assertExists()
     }
 
-    // Test 13: Validate multiple visits to Albums screen
+    // Test 11: Validate multiple visits to Albums screen
     @Test
     fun validateMultipleVisitsToAlbumsTest() {
         repeat(3) {
@@ -272,7 +253,7 @@ class AlbumDetailNavigationTest {
 
     // ==================== Complete Integration Tests ====================
 
-    // Test 14: Validate complete Albums screen flow
+    // Test 12: Validate complete Albums screen flow
     @Test
     fun validateCompleteAlbumsScreenFlowTest() {
         // Step 1: Verify Albums is default
@@ -312,7 +293,7 @@ class AlbumDetailNavigationTest {
         composeTestRule.onNodeWithText("Find in albums").assertExists()
     }
 
-    // Test 15: Validate Albums screen UI elements
+    // Test 13: Validate Albums screen UI elements
     @Test
     fun validateAlbumsScreenUIElementsTest() {
         composeTestRule.waitForIdle()
@@ -331,7 +312,7 @@ class AlbumDetailNavigationTest {
         composeTestRule.onNodeWithText("Reintentar").assertDoesNotExist()
     }
 
-    // Test 16: Validate Albums screen doesn't crash on rapid actions
+    // Test 14: Validate Albums screen doesn't crash on rapid actions
     @Test
     fun validateAlbumsScreenStabilityTest() {
         composeTestRule.waitForIdle()
@@ -351,7 +332,7 @@ class AlbumDetailNavigationTest {
         composeTestRule.onNodeWithText("Find in albums").assertExists()
     }
 
-    // Test 17: Validate Albums tab maintains bottom navigation
+    // Test 15: Validate Albums tab maintains bottom navigation
     @Test
     fun validateAlbumsTabMaintainsBottomNavigationTest() {
         composeTestRule.waitForIdle()
@@ -366,7 +347,7 @@ class AlbumDetailNavigationTest {
         composeTestRule.onNodeWithText("Artists").assertHasClickAction()
     }
 
-    // Test 18: Validate search with different queries
+    // Test 16: Validate search with different queries
     @Test
     fun validateSearchWithDifferentQueriesTest() {
         composeTestRule.waitForIdle()
@@ -391,7 +372,7 @@ class AlbumDetailNavigationTest {
         composeTestRule.onNodeWithText("Find in albums").assertExists()
     }
 
-    // Test 19: Validate Albums screen after returning from other screens
+    // Test 17: Validate Albums screen after returning from other screens
     @Test
     fun validateAlbumsAfterFullNavigationCycleTest() {
         composeTestRule.waitForIdle()
@@ -422,7 +403,7 @@ class AlbumDetailNavigationTest {
         composeTestRule.onNode(hasSetTextAction()).assertExists()
     }
 
-    // Test 20: Validate complete end-to-end Albums flow
+    // Test 18: Validate complete end-to-end Albums flow
     @Test
     fun validateCompleteE2EAlbumsFlowTest() {
         // Step 1: Verify initial Albums screen

@@ -1,21 +1,26 @@
-package com.uniandes.vynilapp.views
+package com.uniandes.vynilapp.components
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import com.uniandes.vynilapp.model.Artist
 import com.uniandes.vynilapp.model.ArtistAlbum
-import com.uniandes.vynilapp.model.PerformerPrizes
+import com.uniandes.vynilapp.views.ArtistItem
+import com.uniandes.vynilapp.views.ArtistsList
+import com.uniandes.vynilapp.views.LoadingArtists
+import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Before
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertNotNull
 
 class ArtistActivityTest {
     @get:Rule
@@ -171,9 +176,9 @@ class ArtistActivityTest {
         composeTestRule.onNodeWithText("Rubén Blades").performClick()
         composeTestRule.waitForIdle()
 
-        assertNotNull(clickedArtist)
-        assertEquals("Rubén Blades", clickedArtist?.name)
-        assertEquals(1, artistClickCount)
+        Assert.assertNotNull(clickedArtist)
+        Assert.assertEquals("Rubén Blades", clickedArtist?.name)
+        Assert.assertEquals(1, artistClickCount)
     }
 
     // Test 5: Validate multiple artist clicks
@@ -196,9 +201,9 @@ class ArtistActivityTest {
         composeTestRule.onNodeWithText("Carlos Vives").performClick()
         composeTestRule.waitForIdle()
 
-        assertEquals(2, clickedArtists.size)
-        assertEquals("Rubén Blades", clickedArtists[0].name)
-        assertEquals("Carlos Vives", clickedArtists[1].name)
+        Assert.assertEquals(2, clickedArtists.size)
+        Assert.assertEquals("Rubén Blades", clickedArtists[0].name)
+        Assert.assertEquals("Carlos Vives", clickedArtists[1].name)
     }
 
     // ==================== ArtistItem Tests ====================
@@ -294,7 +299,7 @@ class ArtistActivityTest {
         composeTestRule.onNodeWithText("Rubén Blades").performClick()
         composeTestRule.waitForIdle()
 
-        assertTrue(clicked)
+        Assert.assertTrue(clicked)
     }
 
     // Test 12: Validate ArtistItem with image has content description
@@ -360,7 +365,7 @@ class ArtistActivityTest {
         }
 
         composeTestRule.waitForIdle()
-        assertEquals(10, clickCount)
+        Assert.assertEquals(10, clickCount)
     }
 
     // ==================== LoadingArtists Tests ====================
@@ -433,8 +438,8 @@ class ArtistActivityTest {
         }
 
         composeTestRule.setContent {
-            androidx.compose.foundation.layout.Box(
-                modifier = Modifier
+            Box(
+                modifier = Modifier.Companion
                     .fillMaxWidth()
                     .height(300.dp)
             ) {
@@ -481,7 +486,7 @@ class ArtistActivityTest {
         composeTestRule.onNodeWithText("Juanes").performClick()
         composeTestRule.waitForIdle()
 
-        assertEquals(listOf("Rubén Blades", "Carlos Vives", "Juanes"), clickSequence)
+        Assert.assertEquals(listOf("Rubén Blades", "Carlos Vives", "Juanes"), clickSequence)
     }
 
     // Test 21: Validate ArtistItem with special characters in name
@@ -639,7 +644,7 @@ class ArtistActivityTest {
     @Test
     fun validateMultipleArtistItemsTest() {
         composeTestRule.setContent {
-            androidx.compose.foundation.layout.Column {
+            Column {
                 mockArtists.forEach { artist ->
                     ArtistItem(
                         artist = artist,
@@ -678,9 +683,9 @@ class ArtistActivityTest {
         composeTestRule.onNodeWithText("Carlos Vives").performClick()
         composeTestRule.waitForIdle()
 
-        assertEquals(2, clickCounts[100])
-        assertEquals(1, clickCounts[101])
-        assertNull(clickCounts[102])
+        Assert.assertEquals(2, clickCounts[100])
+        Assert.assertEquals(1, clickCounts[101])
+        Assert.assertNull(clickCounts[102])
     }
 
     // Test 31: Validate ArtistItem with empty name
@@ -743,17 +748,17 @@ class ArtistActivityTest {
         }
 
         // Initial state
-        assertNull(selectedArtist)
+        Assert.assertNull(selectedArtist)
 
         // Select first artist
         composeTestRule.onNodeWithText("Rubén Blades").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(100, selectedArtist?.id)
+        Assert.assertEquals(100, selectedArtist?.id)
 
         // Select second artist
         composeTestRule.onNodeWithText("Carlos Vives").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(101, selectedArtist?.id)
+        Assert.assertEquals(101, selectedArtist?.id)
     }
 
     // Test 35: Validate ArtistItem image with valid URL
@@ -801,7 +806,7 @@ class ArtistActivityTest {
     @Test
     fun validateAllComponentsRenderTest() {
         composeTestRule.setContent {
-            androidx.compose.foundation.layout.Column {
+            Column {
                 LoadingArtists()
                 ArtistsList(
                     artists = mockArtists,

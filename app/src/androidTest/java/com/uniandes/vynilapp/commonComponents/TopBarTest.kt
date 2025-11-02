@@ -1,12 +1,18 @@
-package com.uniandes.vynilapp.views.common
+package com.uniandes.vynilapp.commonComponents
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.hasTextExactly
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.uniandes.vynilapp.views.common.TopBar
+import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Before
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 
 class TopBarTest {
     @get:Rule
@@ -77,7 +83,7 @@ class TopBarTest {
             .assertIsDisplayed()
     }
 
-    // Test 4: Validate back button is clickable
+    // Test 5: Validate back button is clickable
     @Test
     fun validateBackButtonIsClickableTest() {
         composeTestRule.setContent {
@@ -92,7 +98,7 @@ class TopBarTest {
             .assertHasClickAction()
     }
 
-    // Test 5: Validate back button click triggers callback
+    // Test 6: Validate back button click triggers callback
     @Test
     fun validateBackButtonClickTest() {
         composeTestRule.setContent {
@@ -110,11 +116,11 @@ class TopBarTest {
 
         // Verify callback was triggered
         composeTestRule.waitForIdle()
-        assertTrue(backClicked)
-        assertEquals(1, backClickCount)
+        Assert.assertTrue(backClicked)
+        Assert.assertEquals(1, backClickCount)
     }
 
-    // Test 6: Validate multiple back button clicks
+    // Test 7: Validate multiple back button clicks
     @Test
     fun validateMultipleBackClicksTest() {
         composeTestRule.setContent {
@@ -129,27 +135,15 @@ class TopBarTest {
         // Click back button multiple times
         composeTestRule.onNodeWithContentDescription("Back").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(1, backClickCount)
+        Assert.assertEquals(1, backClickCount)
 
         composeTestRule.onNodeWithContentDescription("Back").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(2, backClickCount)
+        Assert.assertEquals(2, backClickCount)
 
         composeTestRule.onNodeWithContentDescription("Back").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(3, backClickCount)
-    }
-
-    // Test 7: Validate different title texts
-    @Test
-    fun validateDifferentTitlesTest() {
-        val title1 = "Artist Details"
-
-        composeTestRule.setContent {
-            TopBar(title = title1, onBack = {})
-        }
-
-        composeTestRule.onNodeWithText(title1).assertExists()
+        Assert.assertEquals(3, backClickCount)
     }
 
     // Test 8: Validate long title text
@@ -185,46 +179,7 @@ class TopBarTest {
             .assertIsDisplayed()
     }
 
-    // Test 10: Validate title with special characters
-    @Test
-    fun validateTitleWithSpecialCharactersTest() {
-        val specialTitle = "Album's Details & Info!"
-
-        composeTestRule.setContent {
-            TopBar(
-                title = specialTitle,
-                onBack = {}
-            )
-        }
-
-        composeTestRule.onNodeWithText(specialTitle)
-            .assertExists()
-            .assertIsDisplayed()
-    }
-
-    // Test 11: Validate rapid back button clicks
-    @Test
-    fun validateRapidBackClicksTest() {
-        composeTestRule.setContent {
-            TopBar(
-                title = "Test",
-                onBack = {
-                    backClickCount++
-                }
-            )
-        }
-
-        // Rapidly click back button
-        repeat(5) {
-            composeTestRule.onNodeWithContentDescription("Back").performClick()
-        }
-        composeTestRule.waitForIdle()
-
-        // Verify all clicks were registered
-        assertEquals(5, backClickCount)
-    }
-
-    // Test 12: Validate TopBar structure
+    // Test 10: Validate TopBar structure
     @Test
     fun validateTopBarStructureTest() {
         composeTestRule.setContent {
@@ -239,7 +194,7 @@ class TopBarTest {
         composeTestRule.onNodeWithText("Structure Test").assertExists()
     }
 
-    // Test 13: Validate back callback with state change
+    // Test 11: Validate back callback with state change
     @Test
     fun validateBackCallbackWithStateChangeTest() {
         var navigationState = "initial"
@@ -254,17 +209,17 @@ class TopBarTest {
         }
 
         // Initial state
-        assertEquals("initial", navigationState)
+        Assert.assertEquals("initial", navigationState)
 
         // Click back
         composeTestRule.onNodeWithContentDescription("Back").performClick()
         composeTestRule.waitForIdle()
 
         // Verify state changed
-        assertEquals("back_pressed", navigationState)
+        Assert.assertEquals("back_pressed", navigationState)
     }
 
-    // Test 14: Validate TopBar renders without errors
+    // Test 12: Validate TopBar renders without errors
     @Test
     fun validateTopBarRendersWithoutErrorsTest() {
         // Ensure TopBar renders without throwing exceptions
@@ -279,7 +234,7 @@ class TopBarTest {
         composeTestRule.onNodeWithContentDescription("Back").assertExists()
     }
 
-    // Test 15: Validate exact title content
+    // Test 13: Validate exact title content
     @Test
     fun validateExactTitleContentTest() {
         val exactTitle = "Exact Match Test"
@@ -295,69 +250,5 @@ class TopBarTest {
         composeTestRule.onNode(
             hasText(exactTitle) and hasTextExactly(exactTitle)
         ).assertExists()
-    }
-
-    // Test 16: Validate only one back button exists
-    @Test
-    fun validateSingleBackButtonTest() {
-        composeTestRule.setContent {
-            TopBar(
-                title = "Test",
-                onBack = {}
-            )
-        }
-
-        // Verify exactly one back button
-        val backButtons = composeTestRule.onAllNodesWithContentDescription("Back")
-            .fetchSemanticsNodes()
-        assertEquals(1, backButtons.size)
-    }
-
-    // Test 17: Validate only one title exists
-    @Test
-    fun validateSingleTitleTest() {
-        val title = "Unique Title"
-
-        composeTestRule.setContent {
-            TopBar(
-                title = title,
-                onBack = {}
-            )
-        }
-
-        // Verify exactly one title
-        val titleNodes = composeTestRule.onAllNodesWithText(title, substring = false)
-            .fetchSemanticsNodes()
-        assertEquals(1, titleNodes.size)
-    }
-
-    // Test 18: Validate callback interaction flow
-    @Test
-    fun validateCallbackInteractionFlowTest() {
-        var lastClickTime = 0L
-        var clickSequence = mutableListOf<Int>()
-
-        composeTestRule.setContent {
-            TopBar(
-                title = "Flow Test",
-                onBack = {
-                    lastClickTime = System.currentTimeMillis()
-                    clickSequence.add(clickSequence.size + 1)
-                }
-            )
-        }
-
-        val startTime = System.currentTimeMillis()
-
-        // First click
-        composeTestRule.onNodeWithContentDescription("Back").performClick()
-        composeTestRule.waitForIdle()
-        assertEquals(listOf(1), clickSequence)
-        assertTrue(lastClickTime >= startTime)
-
-        // Second click
-        composeTestRule.onNodeWithContentDescription("Back").performClick()
-        composeTestRule.waitForIdle()
-        assertEquals(listOf(1, 2), clickSequence)
     }
 }

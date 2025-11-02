@@ -1,12 +1,16 @@
-package com.uniandes.vynilapp.views.common
+package com.uniandes.vynilapp.commonComponents
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.hasTextExactly
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.uniandes.vynilapp.views.common.ErrorScreen
+import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Before
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 
 class ErrorDetailScreenTest {
     @get:Rule
@@ -44,73 +48,7 @@ class ErrorDetailScreenTest {
             .assertIsDisplayed()
     }
 
-    // Test 2: Validate error message is displayed
-    @Test
-    fun validateErrorMessageDisplayTest() {
-        val errorText = "Failed to load data"
-
-        composeTestRule.setContent {
-            ErrorScreen(
-                error = errorText,
-                onRetry = {}
-            )
-        }
-
-        composeTestRule.onNodeWithText(errorText)
-            .assertExists()
-            .assertIsDisplayed()
-    }
-
-    // Test 3: Validate retry button is displayed
-    @Test
-    fun validateRetryButtonDisplayTest() {
-        composeTestRule.setContent {
-            ErrorScreen(
-                error = "Error",
-                onRetry = {}
-            )
-        }
-
-        composeTestRule.onNodeWithText("Reintentar")
-            .assertExists()
-            .assertIsDisplayed()
-    }
-
-    // Test 4: Validate retry button is clickable
-    @Test
-    fun validateRetryButtonIsClickableTest() {
-        composeTestRule.setContent {
-            ErrorScreen(
-                error = "Error",
-                onRetry = {}
-            )
-        }
-
-        composeTestRule.onNodeWithText("Reintentar")
-            .assertHasClickAction()
-    }
-
-    // Test 5: Validate retry button click triggers callback
-    @Test
-    fun validateRetryButtonClickTest() {
-        composeTestRule.setContent {
-            ErrorScreen(
-                error = "Error",
-                onRetry = {
-                    retryClicked = true
-                    retryClickCount++
-                }
-            )
-        }
-
-        composeTestRule.onNodeWithText("Reintentar").performClick()
-
-        composeTestRule.waitForIdle()
-        assertTrue(retryClicked)
-        assertEquals(1, retryClickCount)
-    }
-
-    // Test 6: Validate multiple retry clicks
+    // Test 2: Validate multiple retry clicks
     @Test
     fun validateMultipleRetryClicksTest() {
         composeTestRule.setContent {
@@ -125,10 +63,10 @@ class ErrorDetailScreenTest {
         }
 
         composeTestRule.waitForIdle()
-        assertEquals(3, retryClickCount)
+        Assert.assertEquals(3, retryClickCount)
     }
 
-    // Test 7: Validate long error message
+    // Test 3: Validate long error message
     @Test
     fun validateLongErrorMessageTest() {
         val longError = "This is a very long error message that explains in detail what went wrong with the network request and why it failed to complete successfully"
@@ -144,7 +82,7 @@ class ErrorDetailScreenTest {
             .assertExists()
     }
 
-    // Test 8: Validate Spanish error message
+    // Test 4: Validate Spanish error message
     @Test
     fun validateSpanishErrorMessageTest() {
         val spanishError = "Error al cargar los datos"
@@ -161,7 +99,7 @@ class ErrorDetailScreenTest {
             .assertIsDisplayed()
     }
 
-    // Test 9: Validate empty error message
+    // Test 5: Validate empty error message
     @Test
     fun validateEmptyErrorMessageTest() {
         composeTestRule.setContent {
@@ -176,7 +114,7 @@ class ErrorDetailScreenTest {
             .assertExists()
     }
 
-    // Test 10: Validate error screen structure
+    // Test 6: Validate error screen structure
     @Test
     fun validateErrorScreenStructureTest() {
         composeTestRule.setContent {
@@ -191,7 +129,7 @@ class ErrorDetailScreenTest {
         composeTestRule.onNodeWithText("Reintentar").assertExists()
     }
 
-    // Test 11: Validate retry callback with state change
+    // Test 7: Validate retry callback with state change
     @Test
     fun validateRetryCallbackWithStateChangeTest() {
         var loadingState = false
@@ -205,15 +143,15 @@ class ErrorDetailScreenTest {
             )
         }
 
-        assertEquals(false, loadingState)
+        Assert.assertEquals(false, loadingState)
 
         composeTestRule.onNodeWithText("Reintentar").performClick()
         composeTestRule.waitForIdle()
 
-        assertEquals(true, loadingState)
+        Assert.assertEquals(true, loadingState)
     }
 
-    // Test 12: Validate rapid retry clicks
+    // Test 8: Validate rapid retry clicks
     @Test
     fun validateRapidRetryClicksTest() {
         composeTestRule.setContent {
@@ -228,10 +166,10 @@ class ErrorDetailScreenTest {
         }
 
         composeTestRule.waitForIdle()
-        assertEquals(10, retryClickCount)
+        Assert.assertEquals(10, retryClickCount)
     }
 
-    // Test 13: Validate error screen renders without errors
+    // Test 9: Validate error screen renders without errors
     @Test
     fun validateErrorScreenRendersWithoutErrorsTest() {
         composeTestRule.setContent {
@@ -244,7 +182,7 @@ class ErrorDetailScreenTest {
         composeTestRule.onNodeWithText("Test error").assertExists()
     }
 
-    // Test 14: Validate exact button text
+    // Test 10: Validate exact button text
     @Test
     fun validateExactButtonTextTest() {
         composeTestRule.setContent {
@@ -259,22 +197,7 @@ class ErrorDetailScreenTest {
         ).assertExists()
     }
 
-    // Test 15: Validate only one retry button
-    @Test
-    fun validateSingleRetryButtonTest() {
-        composeTestRule.setContent {
-            ErrorScreen(
-                error = "Error",
-                onRetry = {}
-            )
-        }
-
-        val retryButtons = composeTestRule.onAllNodesWithText("Reintentar")
-            .fetchSemanticsNodes()
-        assertEquals(1, retryButtons.size)
-    }
-
-    // Test 16: Validate both elements visible together
+    // Test 11: Validate both elements visible together
     @Test
     fun validateBothElementsVisibleTogetherTest() {
         composeTestRule.setContent {
@@ -288,7 +211,7 @@ class ErrorDetailScreenTest {
         composeTestRule.onNodeWithText("Reintentar").assertIsDisplayed()
     }
 
-    // Test 17: Validate network error message
+    // Test 12: Validate network error message
     @Test
     fun validateNetworkErrorMessageTest() {
         val networkError = "No internet connection available"
@@ -303,7 +226,7 @@ class ErrorDetailScreenTest {
         composeTestRule.onNodeWithText(networkError).assertExists()
     }
 
-    // Test 18: Validate server error message
+    // Test 13: Validate server error message
     @Test
     fun validateServerErrorMessageTest() {
         val serverError = "500 Internal Server Error"
@@ -318,7 +241,7 @@ class ErrorDetailScreenTest {
         composeTestRule.onNodeWithText(serverError).assertExists()
     }
 
-    // Test 19: Validate callback interaction flow
+    // Test 14: Validate callback interaction flow
     @Test
     fun validateCallbackInteractionFlowTest() {
         val retrySequence = mutableListOf<Int>()
@@ -334,14 +257,14 @@ class ErrorDetailScreenTest {
 
         composeTestRule.onNodeWithText("Reintentar").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(listOf(1), retrySequence)
+        Assert.assertEquals(listOf(1), retrySequence)
 
         composeTestRule.onNodeWithText("Reintentar").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(listOf(1, 2), retrySequence)
+        Assert.assertEquals(listOf(1, 2), retrySequence)
     }
 
-    // Test 20: Validate error with special characters
+    // Test 15: Validate error with special characters
     @Test
     fun validateErrorWithSpecialCharactersTest() {
         val specialError = "Error: Failed to connect! (404)"

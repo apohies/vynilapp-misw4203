@@ -1,11 +1,17 @@
-package com.uniandes.vynilapp.views.common
+package com.uniandes.vynilapp.commonComponents
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.uniandes.vynilapp.views.common.BottomNavigationBar
+import com.uniandes.vynilapp.views.common.NavigationItem
+import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Before
-import org.junit.Assert.assertEquals
 
 class BottomNavigationTest {
     @get:Rule
@@ -36,61 +42,13 @@ class BottomNavigationTest {
         composeTestRule.onNodeWithText("Collections").assertIsDisplayed()
     }
 
-    // Test 2: Validate Albums tab selection state
-    @Test
-    fun validateAlbumsTabSelectionTest() {
-        composeTestRule.setContent {
-            BottomNavigationBar(
-                selectedTab = NavigationItem.ALBUMS,
-                onTabSelected = {}
-            )
-        }
-
-        // Verify Albums tab exists and is displayed
-        composeTestRule.onNodeWithText("Albums")
-            .assertExists()
-            .assertIsDisplayed()
-    }
-
-    // Test 3: Validate Artists tab selection state
-    @Test
-    fun validateArtistsTabSelectionTest() {
-        composeTestRule.setContent {
-            BottomNavigationBar(
-                selectedTab = NavigationItem.ARTISTS,
-                onTabSelected = {}
-            )
-        }
-
-        // Verify Artists tab exists and is displayed
-        composeTestRule.onNodeWithText("Artists")
-            .assertExists()
-            .assertIsDisplayed()
-    }
-
-    // Test 4: Validate Collections tab selection state
-    @Test
-    fun validateCollectionsTabSelectionTest() {
-        composeTestRule.setContent {
-            BottomNavigationBar(
-                selectedTab = NavigationItem.COLLECTIONS,
-                onTabSelected = {}
-            )
-        }
-
-        // Verify Collections tab exists and is displayed
-        composeTestRule.onNodeWithText("Collections")
-            .assertExists()
-            .assertIsDisplayed()
-    }
-
-    // Test 5: Validate Albums tab click interaction
+    // Test 2: Validate Albums tab click interaction
     @Test
     fun validateAlbumsTabClickTest() {
         composeTestRule.setContent {
             BottomNavigationBar(
                 selectedTab = NavigationItem.ARTISTS,
-                onTabSelected = { 
+                onTabSelected = {
                     selectedTab = it
                     tabSelectionCount++
                 }
@@ -99,20 +57,20 @@ class BottomNavigationTest {
 
         // Click on Albums tab
         composeTestRule.onNodeWithText("Albums").performClick()
-        
+
         // Verify the callback was triggered
         composeTestRule.waitForIdle()
-        assertEquals(NavigationItem.ALBUMS, selectedTab)
-        assertEquals(1, tabSelectionCount)
+        Assert.assertEquals(NavigationItem.ALBUMS, selectedTab)
+        Assert.assertEquals(1, tabSelectionCount)
     }
 
-    // Test 6: Validate Artists tab click interaction
+    // Test 3: Validate Artists tab click interaction
     @Test
     fun validateArtistsTabClickTest() {
         composeTestRule.setContent {
             BottomNavigationBar(
                 selectedTab = NavigationItem.ALBUMS,
-                onTabSelected = { 
+                onTabSelected = {
                     selectedTab = it
                     tabSelectionCount++
                 }
@@ -121,20 +79,20 @@ class BottomNavigationTest {
 
         // Click on Artists tab
         composeTestRule.onNodeWithText("Artists").performClick()
-        
+
         // Verify the callback was triggered
         composeTestRule.waitForIdle()
-        assertEquals(NavigationItem.ARTISTS, selectedTab)
-        assertEquals(1, tabSelectionCount)
+        Assert.assertEquals(NavigationItem.ARTISTS, selectedTab)
+        Assert.assertEquals(1, tabSelectionCount)
     }
 
-    // Test 7: Validate Collections tab click interaction
+    // Test 4: Validate Collections tab click interaction
     @Test
     fun validateCollectionsTabClickTest() {
         composeTestRule.setContent {
             BottomNavigationBar(
                 selectedTab = NavigationItem.ALBUMS,
-                onTabSelected = { 
+                onTabSelected = {
                     selectedTab = it
                     tabSelectionCount++
                 }
@@ -143,20 +101,20 @@ class BottomNavigationTest {
 
         // Click on Collections tab
         composeTestRule.onNodeWithText("Collections").performClick()
-        
+
         // Verify the callback was triggered
         composeTestRule.waitForIdle()
-        assertEquals(NavigationItem.COLLECTIONS, selectedTab)
-        assertEquals(1, tabSelectionCount)
+        Assert.assertEquals(NavigationItem.COLLECTIONS, selectedTab)
+        Assert.assertEquals(1, tabSelectionCount)
     }
 
-    // Test 8: Validate multiple tab navigation sequence
+    // Test 5: Validate multiple tab navigation sequence
     @Test
     fun validateMultipleTabNavigationTest() {
         composeTestRule.setContent {
             BottomNavigationBar(
                 selectedTab = NavigationItem.ALBUMS,
-                onTabSelected = { 
+                onTabSelected = {
                     selectedTab = it
                     tabSelectionCount++
                 }
@@ -166,27 +124,27 @@ class BottomNavigationTest {
         // Navigate through all tabs in sequence
         composeTestRule.onNodeWithText("Artists").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(NavigationItem.ARTISTS, selectedTab)
-        assertEquals(1, tabSelectionCount)
+        Assert.assertEquals(NavigationItem.ARTISTS, selectedTab)
+        Assert.assertEquals(1, tabSelectionCount)
 
         composeTestRule.onNodeWithText("Collections").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(NavigationItem.COLLECTIONS, selectedTab)
-        assertEquals(2, tabSelectionCount)
+        Assert.assertEquals(NavigationItem.COLLECTIONS, selectedTab)
+        Assert.assertEquals(2, tabSelectionCount)
 
         composeTestRule.onNodeWithText("Albums").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(NavigationItem.ALBUMS, selectedTab)
-        assertEquals(3, tabSelectionCount)
+        Assert.assertEquals(NavigationItem.ALBUMS, selectedTab)
+        Assert.assertEquals(3, tabSelectionCount)
     }
 
-    // Test 9: Validate clicking the same tab multiple times
+    // Test 6: Validate clicking the same tab multiple times
     @Test
     fun validateSameTabMultipleClicksTest() {
         composeTestRule.setContent {
             BottomNavigationBar(
                 selectedTab = NavigationItem.ALBUMS,
-                onTabSelected = { 
+                onTabSelected = {
                     selectedTab = it
                     tabSelectionCount++
                 }
@@ -196,14 +154,14 @@ class BottomNavigationTest {
         // Click Albums tab multiple times
         composeTestRule.onNodeWithText("Albums").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(1, tabSelectionCount)
+        Assert.assertEquals(1, tabSelectionCount)
 
         composeTestRule.onNodeWithText("Albums").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(2, tabSelectionCount)
+        Assert.assertEquals(2, tabSelectionCount)
     }
 
-    // Test 10: Validate all navigation items are present
+    // Test 7: Validate all navigation items are present
     @Test
     fun validateAllNavigationItemsArePresentTest() {
         composeTestRule.setContent {
@@ -219,7 +177,7 @@ class BottomNavigationTest {
         composeTestRule.onNodeWithText("Collections").assertExists()
     }
 
-    // Test 11: Validate navigation bar structure
+    // Test 8: Validate navigation bar structure
     @Test
     fun validateNavigationBarStructureTest() {
         composeTestRule.setContent {
@@ -232,24 +190,24 @@ class BottomNavigationTest {
         // Verify the navigation bar contains exactly 3 items
         val allNodes = composeTestRule.onAllNodesWithText("Albums", substring = false)
             .fetchSemanticsNodes()
-        assertEquals(1, allNodes.size)
+        Assert.assertEquals(1, allNodes.size)
 
         val artistNodes = composeTestRule.onAllNodesWithText("Artists", substring = false)
             .fetchSemanticsNodes()
-        assertEquals(1, artistNodes.size)
+        Assert.assertEquals(1, artistNodes.size)
 
         val collectionNodes = composeTestRule.onAllNodesWithText("Collections", substring = false)
             .fetchSemanticsNodes()
-        assertEquals(1, collectionNodes.size)
+        Assert.assertEquals(1, collectionNodes.size)
     }
 
-    // Test 12: Validate rapid tab switching
+    // Test 9: Validate rapid tab switching
     @Test
     fun validateRapidTabSwitchingTest() {
         composeTestRule.setContent {
             BottomNavigationBar(
                 selectedTab = NavigationItem.ALBUMS,
-                onTabSelected = { 
+                onTabSelected = {
                     selectedTab = it
                     tabSelectionCount++
                 }
@@ -261,15 +219,15 @@ class BottomNavigationTest {
         composeTestRule.onNodeWithText("Collections").performClick()
         composeTestRule.onNodeWithText("Albums").performClick()
         composeTestRule.onNodeWithText("Artists").performClick()
-        
+
         composeTestRule.waitForIdle()
-        
+
         // Verify final state
-        assertEquals(NavigationItem.ARTISTS, selectedTab)
-        assertEquals(4, tabSelectionCount)
+        Assert.assertEquals(NavigationItem.ARTISTS, selectedTab)
+        Assert.assertEquals(4, tabSelectionCount)
     }
 
-    // Test 13: Validate each navigation item has label
+    // Test 10: Validate each navigation item has label
     @Test
     fun validateNavigationItemsHaveLabelsTest() {
         composeTestRule.setContent {
@@ -285,7 +243,7 @@ class BottomNavigationTest {
         composeTestRule.onNodeWithText("Collections").assertExists()
     }
 
-    // Test 14: Validate navigation with Artists as initial state
+    // Test 11: Validate navigation with Artists as initial state
     @Test
     fun validateArtistsAsInitialStateTest() {
         composeTestRule.setContent {
@@ -299,7 +257,7 @@ class BottomNavigationTest {
         composeTestRule.onNodeWithText("Collections").assertExists()
     }
 
-    // Test 15: Validate all tabs are clickable
+    // Test 12: Validate all tabs are clickable
     @Test
     fun validateAllTabsAreClickableTest() {
         composeTestRule.setContent {

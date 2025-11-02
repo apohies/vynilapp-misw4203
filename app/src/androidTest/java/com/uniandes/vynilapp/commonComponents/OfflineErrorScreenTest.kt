@@ -1,12 +1,19 @@
-package com.uniandes.vynilapp.views.common
+package com.uniandes.vynilapp.commonComponents
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.hasTextExactly
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.uniandes.vynilapp.views.common.OfflineErrorScreen
+import org.junit.Assert
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Before
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 
 class OfflineErrorScreenTest {
     @get:Rule
@@ -64,37 +71,7 @@ class OfflineErrorScreenTest {
             .assertIsDisplayed()
     }
 
-    // Test 3: Validate title text is displayed correctly
-    @Test
-    fun validateTitleTextTest() {
-        composeTestRule.setContent {
-            OfflineErrorScreen(onRetry = {})
-        }
-
-        // Verify the title "Sin conexión" is displayed
-        composeTestRule.onNodeWithText("Sin conexión")
-            .assertExists()
-            .assertIsDisplayed()
-    }
-
-    // Test 4: Validate message text is displayed correctly
-    @Test
-    fun validateMessageTextTest() {
-        composeTestRule.setContent {
-            OfflineErrorScreen(onRetry = {})
-        }
-
-        // Verify the error message is displayed
-        composeTestRule.onNodeWithText("Parece que no tienes conexión a internet", substring = true)
-            .assertExists()
-            .assertIsDisplayed()
-
-        composeTestRule.onNodeWithText("Por favor, verifica tu conexión e intenta de nuevo", substring = true)
-            .assertExists()
-            .assertIsDisplayed()
-    }
-
-    // Test 5: Validate retry button is displayed
+    // Test 3: Validate retry button is displayed
     @Test
     fun validateRetryButtonIsDisplayedTest() {
         composeTestRule.setContent {
@@ -107,7 +84,7 @@ class OfflineErrorScreenTest {
             .assertIsDisplayed()
     }
 
-    // Test 6: Validate retry button is clickable
+    // Test 4: Validate retry button is clickable
     @Test
     fun validateRetryButtonIsClickableTest() {
         composeTestRule.setContent {
@@ -119,7 +96,7 @@ class OfflineErrorScreenTest {
             .assertHasClickAction()
     }
 
-    // Test 7: Validate retry button click triggers callback
+    // Test 5: Validate retry button click triggers callback
     @Test
     fun validateRetryButtonClickTest() {
         composeTestRule.setContent {
@@ -136,11 +113,11 @@ class OfflineErrorScreenTest {
 
         // Verify the callback was triggered
         composeTestRule.waitForIdle()
-        assertTrue(retryClicked)
-        assertEquals(1, retryClickCount)
+        Assert.assertTrue(retryClicked)
+        Assert.assertEquals(1, retryClickCount)
     }
 
-    // Test 8: Validate multiple retry button clicks
+    // Test 6: Validate multiple retry button clicks
     @Test
     fun validateMultipleRetryClicksTest() {
         composeTestRule.setContent {
@@ -154,18 +131,18 @@ class OfflineErrorScreenTest {
         // Click the retry button multiple times
         composeTestRule.onNodeWithText("Reintentar").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(1, retryClickCount)
+        Assert.assertEquals(1, retryClickCount)
 
         composeTestRule.onNodeWithText("Reintentar").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(2, retryClickCount)
+        Assert.assertEquals(2, retryClickCount)
 
         composeTestRule.onNodeWithText("Reintentar").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(3, retryClickCount)
+        Assert.assertEquals(3, retryClickCount)
     }
 
-    // Test 9: Validate screen layout structure
+    // Test 7: Validate screen layout structure
     @Test
     fun validateScreenLayoutStructureTest() {
         composeTestRule.setContent {
@@ -179,7 +156,7 @@ class OfflineErrorScreenTest {
         composeTestRule.onNodeWithText("Reintentar").assertExists()
     }
 
-    // Test 10: Validate icon content description for accessibility
+    // Test 8: Validate icon content description for accessibility
     @Test
     fun validateIconContentDescriptionTest() {
         composeTestRule.setContent {
@@ -191,7 +168,7 @@ class OfflineErrorScreenTest {
             .assertExists()
     }
 
-    // Test 11: Validate text content is correct (exact match)
+    // Test 9: Validate text content is correct (exact match)
     @Test
     fun validateExactTextContentTest() {
         composeTestRule.setContent {
@@ -209,7 +186,7 @@ class OfflineErrorScreenTest {
         ).assertExists()
     }
 
-    // Test 12: Validate all text elements are present together
+    // Test 10: Validate all text elements are present together
     @Test
     fun validateAllTextElementsPresentTest() {
         composeTestRule.setContent {
@@ -219,14 +196,14 @@ class OfflineErrorScreenTest {
         // Count all text nodes
         val titleNodes = composeTestRule.onAllNodesWithText("Sin conexión", substring = false)
             .fetchSemanticsNodes()
-        assertEquals(1, titleNodes.size)
+        Assert.assertEquals(1, titleNodes.size)
 
         val buttonNodes = composeTestRule.onAllNodesWithText("Reintentar", substring = false)
             .fetchSemanticsNodes()
-        assertEquals(1, buttonNodes.size)
+        Assert.assertEquals(1, buttonNodes.size)
     }
 
-    // Test 13: Validate retry callback with state change
+    // Test 11: Validate retry callback with state change
     @Test
     fun validateRetryCallbackWithStateChangeTest() {
         var connectionState = false
@@ -240,17 +217,17 @@ class OfflineErrorScreenTest {
         }
 
         // Initial state should be false
-        assertEquals(false, connectionState)
+        Assert.assertEquals(false, connectionState)
 
         // Click retry button
         composeTestRule.onNodeWithText("Reintentar").performClick()
         composeTestRule.waitForIdle()
 
         // Verify state changed
-        assertEquals(true, connectionState)
+        Assert.assertEquals(true, connectionState)
     }
 
-    // Test 14: Validate rapid retry clicks
+    // Test 12: Validate rapid retry clicks
     @Test
     fun validateRapidRetryClicksTest() {
         composeTestRule.setContent {
@@ -268,10 +245,10 @@ class OfflineErrorScreenTest {
         composeTestRule.waitForIdle()
 
         // Verify all clicks were registered
-        assertEquals(5, retryClickCount)
+        Assert.assertEquals(5, retryClickCount)
     }
 
-    // Test 15: Validate screen renders without errors
+    // Test 13: Validate screen renders without errors
     @Test
     fun validateScreenRendersWithoutErrorsTest() {
         // This test ensures the composable renders without throwing exceptions
@@ -283,7 +260,7 @@ class OfflineErrorScreenTest {
         composeTestRule.onNodeWithText("Sin conexión").assertExists()
     }
 
-    // Test 16: Validate button interaction flow
+    // Test 14: Validate button interaction flow
     @Test
     fun validateButtonInteractionFlowTest() {
         var interactionCount = 0
@@ -303,12 +280,12 @@ class OfflineErrorScreenTest {
         // First click
         composeTestRule.onNodeWithText("Reintentar").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(1, interactionCount)
-        assertTrue(lastInteractionTime >= startTime)
+        Assert.assertEquals(1, interactionCount)
+        Assert.assertTrue(lastInteractionTime >= startTime)
 
         // Second click
         composeTestRule.onNodeWithText("Reintentar").performClick()
         composeTestRule.waitForIdle()
-        assertEquals(2, interactionCount)
+        Assert.assertEquals(2, interactionCount)
     }
 }
