@@ -282,47 +282,30 @@ fun ArtistAlbums(
     albums: List<ArtistAlbum>,
     onAlbumClick: (Int) -> Unit = {}
 ) {
-    if (albums.isEmpty()) {
-        // Show empty state
-        Box(
+    val artistAlbumsTitle = stringResource(id = R.string.artist_album_title)
+    Column(modifier = Modifier.fillMaxWidth()) {
+        // Section Title
+        Text(
+            text = artistAlbumsTitle,
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
+
+        // Horizontal Scrolling Row
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            contentAlignment = Alignment.Center
+                .horizontalScroll(rememberScrollState())
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                text = "No albums available",
-                color = Color.Gray,
-                fontSize = 14.sp,
-                fontStyle = FontStyle.Italic
-            )
-        }
-    } else {
-        val artistAlbumsTitle = stringResource(id = R.string.artist_album_title)
-        Column(modifier = Modifier.fillMaxWidth()) {
-            // Section Title
-            Text(
-                text = artistAlbumsTitle,
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-
-            // Horizontal Scrolling Row
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                albums.forEach { album ->
-                    AlbumCard(
-                        album = album,
-                        onClick = { onAlbumClick(album.id) }
-                    )
-                }
+            albums.forEach { album ->
+                AlbumCard(
+                    album = album,
+                    onClick = { onAlbumClick(album.id) }
+                )
             }
         }
     }
@@ -376,7 +359,7 @@ fun ArtistAvatar(
     } else {
         Log.w("ArtistDetail", "Artist image URL is null")
         // Artist Image Placeholder
-        ArtistAvatarPlaceHolder(null)
+        ArtistAvatarPlaceHolder(artist?.name)
     }
 }
 
