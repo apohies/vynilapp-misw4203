@@ -1,5 +1,6 @@
 package com.uniandes.vynilapp.views
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,27 +19,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import android.app.Activity
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.model.Comment
+import com.uniandes.vynilapp.model.Track
 import com.uniandes.vynilapp.ui.theme.VynilappTheme
 import com.uniandes.vynilapp.utils.DateUtils
-import com.uniandes.vynilapp.viewModels.albums.AlbumDetailViewModel
-import com.uniandes.vynilapp.views.states.AlbumDetailUiState
-import com.uniandes.vynilapp.views.states.AlbumDetailEvent
-import com.uniandes.vynilapp.model.Album
-import com.uniandes.vynilapp.model.Track
-import com.uniandes.vynilapp.model.Comment
 import com.uniandes.vynilapp.utils.NetworkUtils
+import com.uniandes.vynilapp.viewModels.albums.AlbumDetailViewModel
 import com.uniandes.vynilapp.views.common.ErrorScreen
 import com.uniandes.vynilapp.views.common.LoadingScreen
 import com.uniandes.vynilapp.views.common.OfflineErrorScreen
+import com.uniandes.vynilapp.views.states.AlbumDetailEvent
+import com.uniandes.vynilapp.views.states.AlbumDetailUiState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -218,17 +218,66 @@ fun AlbumHeader(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Portada del álbum
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color.Gray)
-        ) {
-            Text(
-                text = "Portada",
+        Box {
+            Column(
                 modifier = Modifier.align(Alignment.Center),
-                color = Color.White
-            )
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.Gray)
+                ) {
+                    if(album?.cover != null){
+                        AsyncImage(
+                            model = album?.cover,
+                            contentDescription = album?.name,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Text(
+                            text = "Portada",
+                            modifier = Modifier.align(Alignment.Center),
+                            color = Color.White
+                        )
+                    }
+                }
+                // Botones de acción
+                Row {
+                    IconButton(
+                        onClick = { onEvent(AlbumDetailEvent.ToggleLike) }
+                    ) {
+                        Icon(
+                            if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Me gusta",
+                            tint = if (isLiked) Color.Red else Color.White
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { onEvent(AlbumDetailEvent.ToggleSave) }
+                    ) {
+                        Icon(
+                            if (isSaved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                            contentDescription = "Guardar",
+                            tint = if (isSaved) Color(0xFF9C27B0) else Color.White
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { onEvent(AlbumDetailEvent.ShareAlbum) }
+                    ) {
+                        Icon(
+                            Icons.Default.Share,
+                            contentDescription = "Compartir",
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
         }
         
         // Información del álbum
@@ -260,43 +309,6 @@ fun AlbumHeader(
                 color = Color.Gray,
                 fontSize = 12.sp
             )
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            // Botones de acción
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                IconButton(
-                    onClick = { onEvent(AlbumDetailEvent.ToggleLike) }
-                ) {
-                    Icon(
-                        if (isLiked) Icons.Default.Star else Icons.Default.Add,
-                        contentDescription = "Me gusta",
-                        tint = if (isLiked) Color.Red else Color.White
-                    )
-                }
-                
-                IconButton(
-                    onClick = { onEvent(AlbumDetailEvent.ToggleSave) }
-                ) {
-                    Icon(
-                        if (isSaved) Icons.Default.Star else Icons.Default.Add,
-                        contentDescription = "Guardar",
-                        tint = if (isSaved) Color(0xFF9C27B0) else Color.White
-                    )
-                }
-                
-                IconButton(
-                    onClick = { onEvent(AlbumDetailEvent.ShareAlbum) }
-                ) {
-                    Icon(
-                        Icons.Default.Share,
-                        contentDescription = "Compartir",
-                        tint = Color.White
-                    )
-                }
-            }
         }
         
         // Botón de play
@@ -410,7 +422,7 @@ fun SongItem(track: Track) {
             IconButton(onClick = { /* Menú de canción */ }) {
                 Icon(
                     Icons.Default.MoreVert,
-                    contentDescription = "Menú",
+                    contentDescription = "Song menu",
                     tint = Color.Gray,
                     modifier = Modifier.size(16.dp)
                 )
