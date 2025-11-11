@@ -13,7 +13,7 @@
 
 ### Enlace a la apk pre-construida
 
-Descarga una apk en version debug de la aplicación [aquí](https://drive.google.com/file/d/1N5IGqCk6Y6qUFgPFqBTVNP2A2gveOBBS/view?usp=drive_link)
+Descarga una apk en version debug de la aplicación [aquí](./app-debug.apk)
 
 ### Build an apk
 
@@ -129,7 +129,7 @@ adb shell am start -n com.uniandes.vynilapp/.MainActivity
 - Copia `app/build/outputs/apk/debug/app-debug.apk` a tu dispositivo
 - Puedes usar email, USB, Google Drive, etc.
 
-**Nota:** Tambien tenemos una version publica pre construida disponible en este [enlace](https://drive.google.com/file/d/1N5IGqCk6Y6qUFgPFqBTVNP2A2gveOBBS/view?usp=drive_link)
+**Nota:** Tambien tenemos una version publica pre construida disponible en este [enlace](./app-debug.apk)
 
 **Paso 3**: Instala desde el dispositivo
 1. Abre el gestor de archivos en tu dispositivo
