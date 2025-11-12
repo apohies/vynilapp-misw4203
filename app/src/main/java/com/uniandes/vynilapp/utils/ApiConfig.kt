@@ -14,6 +14,8 @@ object ApiConfig {
     const val ARTIST_ENDPOINT = "musicians"
     const val ARTIST_DETAIL_ENDPOINT = "musicians/{id}"
     
+    const val COLLECTORS_ENDPOINT = "collectors"
+    
     const val CONNECT_TIMEOUT_SECONDS = 30L
     const val READ_TIMEOUT_SECONDS = 30L
     const val WRITE_TIMEOUT_SECONDS = 30L
