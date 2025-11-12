@@ -1,6 +1,6 @@
 package com.uniandes.vynilapp.views
 
-import android.R
+import android.R.drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -104,7 +104,6 @@ fun ArtistsList(
     artists: List<Artist>,
     onArtistClick: (Artist) -> Unit
 ) {
-    val context = LocalContext.current
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         items(
             artists, key = {artist -> artist.id}
@@ -122,7 +121,7 @@ fun ArtistItem(
     artist: Artist,
     onClick: () -> Unit
 ) {
-    val albumCount = try { artist.albums?.size ?: 0 } catch (_: Exception) { 0 }
+    val albumCount = try { artist.albums.size } catch (_: Exception) { 0 }
 
     Row(
         modifier = Modifier
@@ -145,13 +144,13 @@ fun ArtistItem(
                     .build(),
                 contentDescription = "${artist.name} image",
                 modifier = imageModifier,
-                fallback = painterResource(id = R.drawable.ic_menu_report_image),
-                error = painterResource(id = R.drawable.ic_menu_report_image)
+                fallback = painterResource(id = drawable.ic_menu_report_image),
+                error = painterResource(id = drawable.ic_menu_report_image)
             )
         } else {
             // placeholder drawable if no URL
             Image(
-                painter = painterResource(id = R.drawable.sym_def_app_icon),
+                painter = painterResource(id = drawable.sym_def_app_icon),
                 contentDescription = "placeholder",
                 modifier = imageModifier
             )

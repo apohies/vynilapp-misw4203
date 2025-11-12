@@ -10,11 +10,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 enum class NavigationItem(
     val title: String,
     val icon: ImageVector,
-    val route: String
 ) {
-    ALBUMS("Albums", Icons.Default.Album, "albums"),
-    ARTISTS("Artists", Icons.Default.Person, "artists"),
-    COLLECTIONS("Collections", Icons.Default.LibraryMusic, "collections")
+    ALBUMS("Albums", Icons.Default.Album),
+    ARTISTS("Artists", Icons.Default.Person),
+    COLLECTIONS("Collections", Icons.Default.LibraryMusic)
 }
 
 @Composable

@@ -19,10 +19,10 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun SearchBar(
+    modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    placeholder: String = "Find in albums",
-    modifier: Modifier = Modifier
+    placeholder: String = "Find in albums"
 ) {
     Box(
         modifier = modifier
