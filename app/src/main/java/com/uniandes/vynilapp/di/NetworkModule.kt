@@ -6,6 +6,8 @@ import com.uniandes.vynilapp.model.services.AlbumServiceAdapter
 import com.uniandes.vynilapp.model.repository.AlbumRepository
 import com.uniandes.vynilapp.model.repository.ArtistRepository
 import com.uniandes.vynilapp.model.services.ArtistServiceAdapter
+import com.uniandes.vynilapp.model.services.CollectorServiceAdapter
+import com.uniandes.vynilapp.model.repository.CollectorRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,5 +46,17 @@ object NetworkModule {
     @Singleton
     fun provideArtistRepository(artistServiceAdapter: ArtistServiceAdapter): ArtistRepository {
         return ArtistRepository(artistServiceAdapter)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCollectorServiceAdapter(apiService: ApiService): CollectorServiceAdapter {
+        return CollectorServiceAdapter(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCollectorRepository(collectorServiceAdapter: CollectorServiceAdapter): CollectorRepository {
+        return CollectorRepository(collectorServiceAdapter)
     }
 }

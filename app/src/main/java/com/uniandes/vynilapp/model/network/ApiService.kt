@@ -2,6 +2,7 @@ package com.uniandes.vynilapp.model.network
 
 import com.uniandes.vynilapp.model.dto.AlbumDto
 import com.uniandes.vynilapp.model.dto.ArtistDto
+import com.uniandes.vynilapp.model.dto.CollectorDto
 import com.uniandes.vynilapp.utils.ApiConfig
 import retrofit2.Response
 import retrofit2.http.Body
@@ -39,4 +40,8 @@ interface ApiService {
 
     @GET(ApiConfig.ARTIST_DETAIL_ENDPOINT)
     suspend fun getArtistById(@Path("id") artistId: Int): Response<ArtistDto>
+
+    // ============== COLLECTORS ===============
+    @GET(ApiConfig.COLLECTORS_ENDPOINT)
+    suspend fun getAllCollectors(): Response<List<CollectorDto>>
 }

@@ -96,7 +96,8 @@ private fun convertToPerformer(performerDto: PerformerDto): Performer {
         name = performerDto.name,
         image = performerDto.image,
         description = performerDto.description,
-        birthDate = performerDto.birthDate
+        birthDate = performerDto.birthDate,
+        creationDate = performerDto.creationDate
     )
 }
 
