@@ -243,21 +243,21 @@ class AlbumDetailViewModelTest {
             )
         } returns Result.success(mockResponse)
 
-        // 2. Contar comentarios iniciales
+   
         val initialCommentsCount = viewModel.uiState.value.comments.size
 
-        // 3. Agregar comentario
+
         viewModel.onEvent(AlbumDetailEvent.AddComment(commentText, 5))
 
-        // 4. Esperar a que termine la coroutine
+
         advanceUntilIdle()
 
-        // 5. Verificar que se agregó
+
         val updatedUiState = viewModel.uiState.value
         assertEquals(initialCommentsCount + 1, updatedUiState.comments.size)
         assertTrue(updatedUiState.comments.any { it.description == commentText })
 
-        // 6. Verificar que se llamó al repository
+
         coVerify {
             albumRepository.AddCommentToAlbum(
                 albumId = any(),
