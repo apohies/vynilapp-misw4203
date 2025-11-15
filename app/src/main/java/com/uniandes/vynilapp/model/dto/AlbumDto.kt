@@ -59,7 +59,10 @@ data class PerformerDto(
     val description: String,
     
     @SerializedName("birthDate")
-    val birthDate: String
+    val birthDate: String?,
+    
+    @SerializedName("creationDate")
+    val creationDate: String?
 )
 
 data class CommentDto(
