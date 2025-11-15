@@ -446,11 +446,11 @@ fun CommentsSection(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 12.dp)
         )
-        
+
         comments.forEach { comment ->
             CommentItem(comment = comment)
         }
-        
+
         // Campo para agregar comentario
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -474,11 +474,11 @@ fun CommentsSection(
                 ),
                 shape = RoundedCornerShape(20.dp)
             )
-            
+
             Spacer(modifier = Modifier.width(8.dp))
-            
+
             IconButton(
-                onClick = { 
+                onClick = {
                     if (newCommentText.isNotBlank()) {
                         onAddComment(newCommentText)
                     }
@@ -503,64 +503,47 @@ fun CommentsSection(
 
 @Composable
 fun CommentItem(comment: Comment) {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        // Avatar del usuario
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(Color.Gray)
-        ) {
-            Text(
-                text = "U",
-                modifier = Modifier.align(Alignment.Center),
-                color = Color.White,
-                fontSize = 12.sp
+            .padding(vertical = 8.dp)
+            .background(
+                Color(0xFFE1BEE7).copy(alpha = 0.2f),
+                RoundedCornerShape(12.dp)
             )
-        }
-        
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
+            .padding(16.dp)
+    ) {
+        Column {
+
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(bottom = 8.dp)
             ) {
-                Text(
-                    text = "Usuario",
-                    color = Color.White,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                
-                Text(
-                    text = "Hace 2 días",
-                    color = Color.Gray,
-                    fontSize = 12.sp
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(4.dp))
-            
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        Color(0xFFE1BEE7).copy(alpha = 0.3f),
-                        RoundedCornerShape(12.dp)
+                repeat(5) { index ->
+                    Icon(
+                        imageVector = if (index < comment.rating) {
+                            Icons.Default.Star
+                        } else {
+                            Icons.Default.StarBorder
+                        },
+                        contentDescription = null,
+                        tint = if (index < comment.rating) {
+                            Color(0xFFFFD700)
+                        } else {
+                            Color.Gray
+                        },
+                        modifier = Modifier.size(16.dp)
                     )
-                    .padding(12.dp)
-            ) {
-                Text(
-                    text = comment.description,
-                    color = Color.White,
-                    fontSize = 14.sp
-                )
+                }
             }
+
+
+            Text(
+                text = comment.description,
+                color = Color.White,
+                fontSize = 14.sp,
+                lineHeight = 20.sp
+            )
         }
     }
 }
