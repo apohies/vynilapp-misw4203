@@ -243,7 +243,7 @@ class AlbumDetailViewModelTest {
             )
         } returns Result.success(mockResponse)
 
-   
+
         val initialCommentsCount = viewModel.uiState.value.comments.size
 
 
