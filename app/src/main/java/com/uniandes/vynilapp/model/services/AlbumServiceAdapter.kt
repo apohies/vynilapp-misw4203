@@ -4,6 +4,8 @@ import com.uniandes.vynilapp.model.Album
 import com.uniandes.vynilapp.model.Comment
 import com.uniandes.vynilapp.model.Performer
 import com.uniandes.vynilapp.model.Track
+import com.uniandes.vynilapp.model.dto.AddCommentResponse
+import com.uniandes.vynilapp.model.dto.AddCommnetDto
 import com.uniandes.vynilapp.model.dto.AlbumDto
 import com.uniandes.vynilapp.model.dto.CommentDto
 import com.uniandes.vynilapp.model.dto.PerformerDto
@@ -17,11 +19,11 @@ import java.util.*
 class AlbumServiceAdapter(
     private val apiService: ApiService
 ) {
-    
+
     suspend fun getAlbumById(albumId: Int): Result<Album> {
         return try {
             val response = apiService.getAlbumById(albumId)
-            
+
             if (response.isSuccessful && response.body() != null) {
                 val albumDto = response.body()!!
                 val album = convertToAlbum(albumDto)
@@ -41,11 +43,11 @@ class AlbumServiceAdapter(
             )
         }
     }
-    
+
     suspend fun getAllAlbums(): Result<List<Album>> {
         return try {
             val response = apiService.getAllAlbums()
-            
+
             if (response.isSuccessful && response.body() != null) {
                 val albumDtos = response.body()!!
                 val albums = albumDtos.map { albumDto -> convertToAlbum(albumDto) }
@@ -65,7 +67,49 @@ class AlbumServiceAdapter(
             )
         }
     }
+
+
+    suspend fun addCommentToAlbum(albumId: Int , description: String, rating: Int , collectorId: Int): Result<AddCommentResponse> {
+        return try {
+
+            val comment = AddCommnetDto(
+                description = description,
+                rating = rating,
+                collector = com.uniandes.vynilapp.model.dto.CollectorE(
+                    id = collectorId
+                ))
+
+
+
+            val response = apiService.addCommentToAlbum(albumId, comment)
+
+            if (response.isSuccessful && response.body() != null) {
+                val addCommentResponse = response.body()!!
+                Result.success(addCommentResponse)
+            } else if (response.isSuccessful && response.body() == null) {
+                Result.failure(
+                    Exception("Error al agregar comentario")
+                )
+            } else {
+                Result.failure(
+                    Exception("Error al agregar comentario: ${response.code()} - ${response.message()}")
+                )
+            }
+
+
+        } catch (e: Exception) {
+            Result.failure(
+                Exception("Error de conexión: ${e.message}")
+            )
+        }
+
+
+    }
+
 }
+
+
+
 
 private fun convertToAlbum(albumDto: AlbumDto): Album {
     return Album(

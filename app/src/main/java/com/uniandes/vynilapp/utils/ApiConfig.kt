@@ -15,6 +15,8 @@ object ApiConfig {
     const val ARTIST_DETAIL_ENDPOINT = "musicians/{id}"
     
     const val COLLECTORS_ENDPOINT = "collectors"
+
+    const val ADD_COMMENT_ENDPOINT = "albums/{albumId}/comments"
     
     const val CONNECT_TIMEOUT_SECONDS = 30L
     const val READ_TIMEOUT_SECONDS = 30L
