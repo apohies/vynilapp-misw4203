@@ -6,14 +6,19 @@ import com.uniandes.vynilapp.model.PerformerPrizes
 import com.uniandes.vynilapp.model.repository.ArtistRepository
 import com.uniandes.vynilapp.viewModels.artists.ArtistDetailViewModel
 import com.uniandes.vynilapp.views.states.ArtistDetailEvent
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ArtistDetailViewModelTest {
@@ -48,13 +53,13 @@ class ArtistDetailViewModelTest {
 
         // Assert
         val uiState = viewModel.uiState.value
-        assertFalse(uiState.isLoading)
-        assertNull(uiState.error)
-        assertNotNull(uiState.artist)
-        assertEquals(artist.id, uiState.artist?.id)
-        assertEquals(artist.name, uiState.artist?.name)
-        assertEquals(artist.albums.size, uiState.albums.size)
-        assertEquals(artist.performerPrizes.size, uiState.performerPrizes.size)
+        Assert.assertFalse(uiState.isLoading)
+        Assert.assertNull(uiState.error)
+        Assert.assertNotNull(uiState.artist)
+        Assert.assertEquals(artist.id, uiState.artist?.id)
+        Assert.assertEquals(artist.name, uiState.artist?.name)
+        Assert.assertEquals(artist.albums.size, uiState.albums.size)
+        Assert.assertEquals(artist.performerPrizes.size, uiState.performerPrizes.size)
 
         coVerify { artistRepository.getArtistById(artistId) }
     }
@@ -73,10 +78,10 @@ class ArtistDetailViewModelTest {
 
         // Assert
         val uiState = viewModel.uiState.value
-        assertFalse(uiState.isLoading)
-        assertNotNull(uiState.error)
-        assertTrue(uiState.error?.contains("Error al cargar el álbum") == true)
-        assertNull(uiState.artist)
+        Assert.assertFalse(uiState.isLoading)
+        Assert.assertNotNull(uiState.error)
+        Assert.assertTrue(uiState.error?.contains("Error al cargar el álbum") == true)
+        Assert.assertNull(uiState.artist)
 
         coVerify { artistRepository.getArtistById(artistId) }
     }
@@ -95,8 +100,8 @@ class ArtistDetailViewModelTest {
 
         // Assert
         val uiState = viewModel.uiState.value
-        assertFalse(uiState.isLoading) // Should be false after completion
-        assertNull(uiState.error)
+        Assert.assertFalse(uiState.isLoading) // Should be false after completion
+        Assert.assertNull(uiState.error)
 
         coVerify { artistRepository.getArtistById(artistId) }
     }
@@ -113,9 +118,9 @@ class ArtistDetailViewModelTest {
 
         // Assert
         val uiState = viewModel.uiState.value
-        assertFalse(uiState.isLoading)
-        assertNotNull(uiState.error)
-        assertTrue(uiState.error?.contains("Error de conexión") == true)
+        Assert.assertFalse(uiState.isLoading)
+        Assert.assertNotNull(uiState.error)
+        Assert.assertTrue(uiState.error?.contains("Error de conexión") == true)
 
         coVerify { artistRepository.getArtistById(artistId) }
     }
@@ -165,7 +170,7 @@ class ArtistDetailViewModelTest {
 
         // Assert
         val currentId = viewModel.getCurrentArtistId()
-        assertEquals(artistId, currentId)
+        Assert.assertEquals(artistId, currentId)
     }
 
     @Test
@@ -202,9 +207,9 @@ class ArtistDetailViewModelTest {
 
         // Assert
         val uiState = viewModel.uiState.value
-        assertEquals(2, uiState.albums.size)
-        assertEquals("Album 1", uiState.albums[0].name)
-        assertEquals("Album 2", uiState.albums[1].name)
+        Assert.assertEquals(2, uiState.albums.size)
+        Assert.assertEquals("Album 1", uiState.albums[0].name)
+        Assert.assertEquals("Album 2", uiState.albums[1].name)
     }
 
     @Test
@@ -224,8 +229,8 @@ class ArtistDetailViewModelTest {
 
         // Assert
         val uiState = viewModel.uiState.value
-        assertEquals(2, uiState.performerPrizes.size)
-        assertEquals(prizes[0].id, uiState.performerPrizes[0].id)
+        Assert.assertEquals(2, uiState.performerPrizes.size)
+        Assert.assertEquals(prizes[0].id, uiState.performerPrizes[0].id)
     }
 
     @Test
@@ -241,9 +246,9 @@ class ArtistDetailViewModelTest {
 
         // Assert
         val uiState = viewModel.uiState.value
-        assertTrue(uiState.albums.isEmpty())
-        assertFalse(uiState.isLoading)
-        assertNull(uiState.error)
+        Assert.assertTrue(uiState.albums.isEmpty())
+        Assert.assertFalse(uiState.isLoading)
+        Assert.assertNull(uiState.error)
     }
 
     @Test
@@ -265,15 +270,15 @@ class ArtistDetailViewModelTest {
         val state2 = viewModel.uiState.value
 
         // Assert
-        assertEquals("Artist 1", state1.artist?.name)
-        assertEquals("Artist 2", state2.artist?.name)
-        assertEquals(artistId2, viewModel.getCurrentArtistId())
+        Assert.assertEquals("Artist 1", state1.artist?.name)
+        Assert.assertEquals("Artist 2", state2.artist?.name)
+        Assert.assertEquals(artistId2, viewModel.getCurrentArtistId())
     }
 
     @Test
     fun `default artist ID should be 100`() = runTest {
         // Assert
-        assertEquals(100, viewModel.getCurrentArtistId())
+        Assert.assertEquals(100, viewModel.getCurrentArtistId())
     }
 
     // Helper methods to create test data
