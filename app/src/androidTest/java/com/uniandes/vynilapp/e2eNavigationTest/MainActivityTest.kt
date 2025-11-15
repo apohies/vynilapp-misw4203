@@ -1,6 +1,5 @@
 package com.uniandes.vynilapp.e2eNavigationTest
 
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -55,10 +54,10 @@ class MainActivityTest {
         composeTestRule.waitForIdle()
 
         // Wait for screen to render
-        Thread.sleep(500)
+        Thread.sleep(1000)
 
-        // Collections screen shows "Coming soon..."
-        composeTestRule.onNodeWithText("Coming soon...")
+        // Collections screen shows "Coleccionista" title
+        composeTestRule.onNodeWithText("Coleccionista")
             .assertExists()
             .assertIsDisplayed()
     }
@@ -83,10 +82,10 @@ class MainActivityTest {
         // Navigate to Collections
         composeTestRule.onNodeWithText("Collections").performClick()
         composeTestRule.waitForIdle()
-        Thread.sleep(500)
+        Thread.sleep(1000)
 
-        // Verify Collections screen
-        composeTestRule.onNodeWithText("Coming soon...").assertExists()
+        // Verify Collections screen shows "Coleccionista"
+        composeTestRule.onNodeWithText("Coleccionista").assertExists()
 
         // Navigate back to Albums
         composeTestRule.onNodeWithText("Albums").performClick()
@@ -130,8 +129,8 @@ class MainActivityTest {
         // Navigate to Collections
         composeTestRule.onNodeWithText("Collections").performClick()
         composeTestRule.waitForIdle()
-        Thread.sleep(500)
-        composeTestRule.onNodeWithText("Coming soon...").assertExists()
+        Thread.sleep(1000)
+        composeTestRule.onNodeWithText("Coleccionista").assertExists()
 
         // Navigate back to Albums
         composeTestRule.onNodeWithText("Albums").performClick()
@@ -149,24 +148,21 @@ class MainActivityTest {
         composeTestRule.onNodeWithText("Albums").assertIsDisplayed()
         composeTestRule.onNodeWithText("Artists").assertIsDisplayed()
 
-        // For Collections, use onAllNodesWithText since there will be 2 after navigation
+        // For Collections, use onAllNodesWithText since there might be multiple after navigation
         composeTestRule.onAllNodesWithText("Collections")[0].assertIsDisplayed()
 
         // Navigate to Collections
         composeTestRule.onNodeWithText("Collections").performClick()
         composeTestRule.waitForIdle()
-        Thread.sleep(500)
+        Thread.sleep(1000)
 
         // Bottom navigation should still be visible
-        // Now we need to be more specific since "Collections" appears twice
         composeTestRule.onNodeWithText("Albums").assertIsDisplayed()
         composeTestRule.onNodeWithText("Artists").assertIsDisplayed()
 
-        // Verify Collections tab exists (there will be 2 nodes now)
+        // Verify Collections tab exists in nav bar
         val collectionsNodes = composeTestRule.onAllNodesWithText("Collections")
-        collectionsNodes.assertCountEquals(2) // One in nav bar, one in screen content
         collectionsNodes[0].assertExists() // Bottom nav
-        collectionsNodes[1].assertExists() // Screen title
     }
 
     // Test 8: Validate all tabs are clickable
@@ -213,10 +209,10 @@ class MainActivityTest {
     fun validateCollectionsScreenContentTest() {
         composeTestRule.onNodeWithText("Collections").performClick()
         composeTestRule.waitForIdle()
-        Thread.sleep(500)
+        Thread.sleep(1000)
 
-        // Should show "Coming soon..." message
-        composeTestRule.onNodeWithText("Coming soon...")
+        // Should show "Coleccionista" title
+        composeTestRule.onNodeWithText("Coleccionista")
             .assertExists()
             .assertIsDisplayed()
     }
@@ -244,9 +240,9 @@ class MainActivityTest {
         // Go to Collections
         composeTestRule.onNodeWithText("Collections").performClick()
         composeTestRule.waitForIdle()
-        Thread.sleep(500)
+        Thread.sleep(1000)
 
-        composeTestRule.onNodeWithText("Coming soon...").assertExists()
+        composeTestRule.onNodeWithText("Coleccionista").assertExists()
     }
 
     // Test 14: Validate navigation from Collections to Artists
@@ -255,8 +251,8 @@ class MainActivityTest {
         // Go to Collections
         composeTestRule.onNodeWithText("Collections").performClick()
         composeTestRule.waitForIdle()
-        Thread.sleep(500)
-        composeTestRule.onNodeWithText("Coming soon...").assertExists()
+        Thread.sleep(1000)
+        composeTestRule.onNodeWithText("Coleccionista").assertExists()
 
         // Go to Artists
         composeTestRule.onNodeWithText("Artists").performClick()
@@ -279,8 +275,8 @@ class MainActivityTest {
             // Artists -> Collections
             composeTestRule.onNodeWithText("Collections").performClick()
             composeTestRule.waitForIdle()
-            Thread.sleep(500)
-            composeTestRule.onNodeWithText("Coming soon...").assertExists()
+            Thread.sleep(1000)
+            composeTestRule.onNodeWithText("Coleccionista").assertExists()
 
             // Collections -> Albums
             composeTestRule.onNodeWithText("Albums").performClick()
@@ -308,8 +304,8 @@ class MainActivityTest {
         // Navigate through screens
         composeTestRule.onNodeWithText("Collections").performClick()
         composeTestRule.waitForIdle()
-        Thread.sleep(500)
-        composeTestRule.onNodeWithText("Coming soon...").assertIsDisplayed()
+        Thread.sleep(1000)
+        composeTestRule.onNodeWithText("Coleccionista").assertIsDisplayed()
 
         composeTestRule.onNodeWithText("Albums").performClick()
         composeTestRule.waitForIdle()

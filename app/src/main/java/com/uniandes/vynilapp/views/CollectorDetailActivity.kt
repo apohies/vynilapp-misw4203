@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,39 +23,45 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.request.ImageRequest
-import com.uniandes.vynilapp.model.Artist
-import com.uniandes.vynilapp.viewModels.artists.ArtistDetailViewModel
+import com.uniandes.vynilapp.model.Collector
+import com.uniandes.vynilapp.model.CollectorAlbum
+import com.uniandes.vynilapp.viewModels.collections.CollectionsDetailViewModel
 import com.uniandes.vynilapp.views.common.ErrorScreen
 import com.uniandes.vynilapp.views.common.LoadingScreen
 import com.uniandes.vynilapp.views.common.TopBar
-import com.uniandes.vynilapp.views.states.ArtistDetailEvent
-import com.uniandes.vynilapp.views.states.ArtistDetailUiState
+import com.uniandes.vynilapp.views.states.CollectorDetailEvent
+import com.uniandes.vynilapp.views.states.CollectorDetailUiState
 import com.uniandes.vynilapp.R
-import com.uniandes.vynilapp.utils.DateUtils
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
-import com.uniandes.vynilapp.model.ArtistAlbum
+import com.uniandes.vynilapp.model.Album
+import com.uniandes.vynilapp.utils.DateUtils
 import com.uniandes.vynilapp.utils.NetworkUtils
 import com.uniandes.vynilapp.views.common.OfflineErrorScreen
 
 @Composable
-fun ArtistDetailScreen(
+fun CollectorDetailScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    artistId: Int = 100,
-    viewModel: ArtistDetailViewModel = hiltViewModel()
+    collectorId: Int = 100,
+    viewModel: CollectionsDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    LaunchedEffect(artistId) {
-        viewModel.onEvent(ArtistDetailEvent.LoadArtistById(artistId))
+    LaunchedEffect(collectorId) {
+        viewModel.onEvent(CollectorDetailEvent.LoadCollectorById(collectorId))
     }
 
     when {
@@ -76,13 +81,13 @@ fun ArtistDetailScreen(
             } else {
                 ErrorScreen(
                     error = errorMessage,
-                    onRetry = { viewModel.onEvent(ArtistDetailEvent.LoadArtistById(artistId)) },
+                    onRetry = { viewModel.onEvent(CollectorDetailEvent.LoadCollectorById(collectorId)) },
                     modifier = modifier
                 )
             }
         }
         else -> {
-            ArtistDetailContent(
+            CollectorDetailContent(
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
                 modifier = modifier,
@@ -90,28 +95,24 @@ fun ArtistDetailScreen(
             )
         }
     }
-
 }
 
 @Composable
-fun ArtistDetailContent(
-    uiState: ArtistDetailUiState,
-    onEvent: (ArtistDetailEvent) -> Unit,
+fun CollectorDetailContent(
+    uiState: CollectorDetailUiState,
+    onEvent: (CollectorDetailEvent) -> Unit,
     modifier: Modifier = Modifier,
     onBack: () -> Unit
 ) {
-    val artistDetailTitle = stringResource(id = R.string.artist_detail_title)
-    val artistDescriptionTitle = stringResource(id = R.string.artist_description_title)
-    // Create a scroll state
     val scrollState = rememberScrollState()
-
+    val collectorDetailTitle = stringResource(id = R.string.collector_detail_title)
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(Color(0xFF111120))
     ) {
         // Top Bar - Fixed (not scrolling)
-        TopBar(artistDetailTitle,onBack)
+        TopBar(collectorDetailTitle, onBack)
 
         // Scrollable Content
         Column(
@@ -122,17 +123,17 @@ fun ArtistDetailContent(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Artist Info Card
+            // Collector Info Card
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ArtistAvatar(uiState.artist)
+                CollectorAvatar(uiState.collector)
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                uiState.artist?.name?.let {
+                uiState.collector?.name?.let {
                     Text(
                         text = it,
                         color = Color.White,
@@ -141,20 +142,13 @@ fun ArtistDetailContent(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = artistDescriptionTitle,
-                    color = Color.White,
-                    fontSize = 24.sp,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                uiState.artist?.description?.let {
+                // Show album count
+                uiState.collector?.albumCount?.let { count ->
+                    val description = String.format(stringResource(id = R.string.collector_albums_in_collection), count)
                     Text(
-                        text = it,
+                        text = description,
                         color = Color(0xFFB0B0B0),
                         fontSize = 14.sp
                     )
@@ -164,10 +158,10 @@ fun ArtistDetailContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             if (uiState.albums.isNotEmpty()) {
-                ArtistAlbums(
+                CollectorAlbums(
                     albums = uiState.albums,
                     onAlbumClick = { albumId ->
-                        Log.d("ArtistDetail", "Album clicked: $albumId")
+                        Log.d("CollectorDetail", "Album clicked: $albumId")
                         // TODO: Navigate to album detail
                     }
                 )
@@ -180,10 +174,15 @@ fun ArtistDetailContent(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                val popularity = stringResource(id = R.string.artist_additional_info_popularity)
-                val birthDate = stringResource(id = R.string.artist_additional_info_birth_date)
-                ArtistInfoRow(label = birthDate, value = DateUtils.formatAlbumDate(uiState.artist?.birthDate))
-                ArtistInfoRow(label = popularity, value = "★★★★☆")
+                var label = stringResource(id = R.string.collector_info_total_albums)
+                CollectorInfoRow(label = label, value = "${uiState.albums.size}")
+
+                label = stringResource(id = R.string.collector_info_collection_value)
+                val totalValue = uiState.albums.sumOf { it.price }
+                CollectorInfoRow(
+                    label = label,
+                    value = String.format("$%.2f", totalValue)
+                )
             }
 
             // Add bottom padding for better scrolling experience
@@ -193,8 +192,8 @@ fun ArtistDetailContent(
 }
 
 @Composable
-fun AlbumCard(
-    album: ArtistAlbum,
+fun CollectorAlbumCard(
+    collectorAlbum: CollectorAlbum,
     onClick: () -> Unit
 ) {
     Card(
@@ -203,21 +202,21 @@ fun AlbumCard(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF111120)
+            containerColor = Color(0xFF1A1A2E)
         )
     ) {
         Column {
             // Album Cover Image
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(album.cover)
+                    .data(collectorAlbum.album.cover)
                     .crossfade(true)
                     .build(),
-                contentDescription = album.name,
+                contentDescription = collectorAlbum.album.name,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)
-                    .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomEnd = 8.dp, bottomStart = 8.dp)),
+                    .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
                 contentScale = ContentScale.Crop,
                 loading = {
                     Box(
@@ -255,7 +254,7 @@ fun AlbumCard(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = album.name,
+                    text = collectorAlbum.album.name,
                     color = Color.White,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
@@ -266,31 +265,80 @@ fun AlbumCard(
                 Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
-                    text = DateUtils.formatAlbumYear(album.releaseDate),
+                    text = DateUtils.formatAlbumYear(collectorAlbum.album.releaseDate),
                     color = Color.Gray,
                     fontSize = 11.sp
                 )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Show price and status
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = String.format("$%.0f", collectorAlbum.price),
+                        color = Color(0xFF6C63FF),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        text = collectorAlbum.status,
+                        color = when(collectorAlbum.status.lowercase()) {
+                            "active" -> Color(0xFF4CAF50)
+                            "inactive" -> Color(0xFFFF9800)
+                            else -> Color.Gray
+                        },
+                        fontSize = 10.sp
+                    )
+                }
             }
         }
     }
 }
 
-
 @Composable
-fun ArtistAlbums(
-    albums: List<ArtistAlbum>,
+fun CollectorAlbums(
+    albums: List<CollectorAlbum>,
     onAlbumClick: (Int) -> Unit = {}
 ) {
-    val artistAlbumsTitle = stringResource(id = R.string.artist_album_title)
+    val collectorDetailTitle = stringResource(id = R.string.collector_detail_album_title)
     Column(modifier = Modifier.fillMaxWidth()) {
         // Section Title
-        Text(
-            text = artistAlbumsTitle,
-            color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 12.dp)
-        )
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ){
+            Text(
+                text = collectorDetailTitle,
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Button(
+                onClick = {},
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF6C63FF)
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Search",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(end = 4.dp)
+                )
+                Text(
+                    text = "Añadir album",
+                    color = Color.White,
+                    fontSize = 14.sp
+                )
+            }
+        }
 
         // Horizontal Scrolling Row
         Row(
@@ -300,10 +348,10 @@ fun ArtistAlbums(
                 .padding(vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            albums.forEach { album ->
-                AlbumCard(
-                    album = album,
-                    onClick = { onAlbumClick(album.id) }
+            albums.forEach { collectorAlbum ->
+                CollectorAlbumCard(
+                    collectorAlbum = collectorAlbum,
+                    onClick = { onAlbumClick(collectorAlbum.album.id) }
                 )
             }
         }
@@ -311,19 +359,19 @@ fun ArtistAlbums(
 }
 
 @Composable
-fun ArtistAvatar(
-    artist: Artist?
-){
-    if(artist?.image != null) {
-        val imageUrl = artist.image
-        Log.d("ArtistDetail", "Loading artist image: $imageUrl")
+fun CollectorAvatar(
+    collector: Collector?
+) {
+    if (collector?.imageUrl != null && collector.imageUrl.isNotEmpty()) {
+        val imageUrl = collector.imageUrl
+        Log.d("CollectorDetail", "Loading collector image: $imageUrl")
 
         SubcomposeAsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(imageUrl)
                 .crossfade(true)
                 .build(),
-            contentDescription = artist.name,
+            contentDescription = collector.name,
             modifier = Modifier
                 .size(150.dp)
                 .clip(RoundedCornerShape(75.dp)),
@@ -345,25 +393,25 @@ fun ArtistAvatar(
             error = { error ->
                 // Show when image fails to load
                 val errorMessage = error.result.throwable.message ?: "Unknown error"
-                Log.e("ArtistDetail", "Failed to load image: $imageUrl - Error: $errorMessage", error.result.throwable)
+                Log.e("CollectorDetail", "Failed to load image: $imageUrl - Error: $errorMessage", error.result.throwable)
 
-                ArtistAvatarPlaceHolder(artist.name)
+                CollectorAvatarPlaceHolder(collector.name)
             },
             success = { state ->
-                Log.i("ArtistDetail", "Successfully loaded image: $imageUrl")
+                Log.i("CollectorDetail", "Successfully loaded image: $imageUrl")
                 // Use default rendering when successful
                 SubcomposeAsyncImageContent()
             }
         )
     } else {
-        Log.w("ArtistDetail", "Artist image URL is null")
-        // Artist Image Placeholder
-        ArtistAvatarPlaceHolder(artist?.name)
+        Log.w("CollectorDetail", "Collector image URL is null or empty")
+        // Collector Image Placeholder
+        CollectorAvatarPlaceHolder(collector?.name)
     }
 }
 
 @Composable
-fun ArtistAvatarPlaceHolder(name: String?) {
+fun CollectorAvatarPlaceHolder(name: String?) {
     Box(
         modifier = Modifier
             .size(150.dp)
@@ -374,7 +422,7 @@ fun ArtistAvatarPlaceHolder(name: String?) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = name?.firstOrNull()?.uppercase() ?: "A",
+            text = name?.firstOrNull()?.uppercase() ?: "C",
             color = Color.White,
             fontSize = 64.sp,
             fontWeight = FontWeight.Bold
@@ -383,7 +431,7 @@ fun ArtistAvatarPlaceHolder(name: String?) {
 }
 
 @Composable
-fun ArtistInfoRow(label: String, value: String) {
+fun CollectorInfoRow(label: String, value: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -409,62 +457,96 @@ fun ArtistInfoRow(label: String, value: String) {
 }
 
 @Preview(
-    name = "Artist Detail Content - With Albums",
+    name = "Collector Detail Content - With Albums",
     showBackground = true,
     backgroundColor = 0xFF111120,
     heightDp = 900
 )
 @Composable
-fun PreviewArtistDetailWithAlbums() {
+fun PreviewCollectorDetailWithAlbums() {
     val mockAlbums = listOf(
-        ArtistAlbum(
+        CollectorAlbum(
             id = 1,
-            name = "Buscando América",
-            cover = "https://i.pravatar.cc/300",
-            releaseDate = "1984-08-01T00:00:00.000Z",
-            description = "Classic salsa album",
-            genre = "Salsa",
-            recordLabel = "Elektra"
+            price = 35.0,
+            status = "Active",
+            album = Album(
+                id = 100,
+                name = "Buscando América",
+                cover = "https://i.pravatar.cc/300",
+                releaseDate = "1984-08-01T00:00:00.000Z",
+                description = "Classic salsa album",
+                genre = "Salsa",
+                recordLabel = "Elektra"
+            )
         ),
-        ArtistAlbum(
+        CollectorAlbum(
             id = 2,
-            name = "Siembra",
-            cover = "https://i.pravatar.cc/300",
-            releaseDate = "1978-09-01T00:00:00.000Z",
-            description = "Iconic album",
-            genre = "Salsa",
-            recordLabel = "Fania"
+            price = 50.0,
+            status = "Active",
+            album = Album(
+                id = 101,
+                name = "Siembra",
+                cover = "https://i.pravatar.cc/300",
+                releaseDate = "1978-09-01T00:00:00.000Z",
+                description = "Iconic album",
+                genre = "Salsa",
+                recordLabel = "Fania"
+            )
         ),
-        ArtistAlbum(
+        CollectorAlbum(
             id = 3,
-            name = "Amor y Control",
-            cover = "https://i.pravatar.cc/300",
-            releaseDate = "1992-01-01T00:00:00.000Z",
-            description = "Great album",
-            genre = "Latin",
-            recordLabel = "Sony"
+            price = 25.0,
+            status = "Inactive",
+            album = Album(
+                id = 102,
+                name = "Amor y Control",
+                cover = "https://i.pravatar.cc/300",
+                releaseDate = "1992-01-01T00:00:00.000Z",
+                description = "Great album",
+                genre = "Latin",
+                recordLabel = "Sony"
+            )
         )
     )
 
-    val mockUiState = ArtistDetailUiState(
-        artist = Artist(
-            id = 104,
-            name = "Pink Floyd",
-            image = null,
-            description = "English rock band formed in London in 1965, known for progressive and psychedelic music.",
-            birthDate = "1965-01-01T00:00:00.000Z",
-            albums = mockAlbums,
-            performerPrizes = emptyList()
+    val mockUiState = CollectorDetailUiState(
+        collector = Collector(
+            id = 1,
+            name = "Jaime Andrés",
+            imageUrl = "https://i.pravatar.cc/150",
+            albumCount = 3
         ),
         albums = mockAlbums,
-        performerPrizes = emptyList(),
         isLoading = false,
         error = null
     )
 
-    ArtistDetailContent(
+    CollectorDetailContent(
         uiState = mockUiState,
         onEvent = {},
         onBack = {}
+    )
+}
+
+@Preview(
+    name = "Collector Detail - Loading State",
+    showBackground = true,
+    backgroundColor = 0xFF111120
+)
+@Composable
+fun PreviewCollectorDetailLoading() {
+    LoadingScreen()
+}
+
+@Preview(
+    name = "Collector Detail - Error State",
+    showBackground = true,
+    backgroundColor = 0xFF111120
+)
+@Composable
+fun PreviewCollectorDetailError() {
+    ErrorScreen(
+        error = "Error al cargar el coleccionista",
+        onRetry = {}
     )
 }

@@ -229,7 +229,8 @@ class AlbumServiceAdapterTest {
                     name = "Rubén Blades",
                     image = "https://example.com/performer.jpg",
                     description = "Cantante panameño",
-                    birthDate = "1948-07-16T00:00:00.000Z"
+                    birthDate = "1948-07-16T00:00:00.000Z",
+                    creationDate = null
                 )
             ),
             comments = listOf(
