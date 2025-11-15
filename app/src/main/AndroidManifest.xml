@@ -30,6 +30,10 @@
             android:exported="false"
             android:label="Detalle del Álbum"
             android:theme="@style/Theme.Vynilapp" />
+        <activity android:name=".views.AlbumCreateActivity"
+            android:exported="false"
+            android:label="Crear Álbum"
+            android:theme="@style/Theme.Vynilapp"/>
     </application>
 
 </manifest>
