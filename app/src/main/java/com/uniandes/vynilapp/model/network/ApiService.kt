@@ -5,6 +5,7 @@ import com.uniandes.vynilapp.model.dto.AddCommnetDto
 import com.uniandes.vynilapp.model.dto.AlbumDto
 import com.uniandes.vynilapp.model.dto.ArtistDto
 import com.uniandes.vynilapp.model.dto.CollectorDto
+import com.uniandes.vynilapp.model.dto.CollectorAlbumsDto
 import com.uniandes.vynilapp.utils.ApiConfig
 import retrofit2.Response
 import retrofit2.http.Body
@@ -53,4 +54,10 @@ interface ApiService {
         @Path("albumId") albumId: Int,
         @Body comment: AddCommnetDto
     ): Response<AddCommentResponse>
+
+    @GET(ApiConfig.COLLECTORS_DETAIL_ENDPOINT)
+    suspend fun getCollectorById(@Path("id") collectorId: Int): Response<CollectorDto>
+
+    @GET(ApiConfig.COLLECTORS_DETAIL_ALBUMS_ENDPOINT)
+    suspend fun getAllAlbumsByCollector(@Path("id") collectorId: Int): Response<List<CollectorAlbumsDto>>
 }

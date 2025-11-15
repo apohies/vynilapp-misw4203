@@ -5,4 +5,9 @@
     <string name="artist_description_title">Biografia</string>
     <string name="artist_additional_info_birth_date">Fecha de nacimiento</string>
     <string name="artist_additional_info_popularity">Popularity</string>
+    <string name="collector_detail_title">Coleccionista</string>
+    <string name="collector_detail_album_title">Álbumes en posesión</string>
+    <string name="collector_info_total_albums">Total de álbumes</string>
+    <string name="collector_info_collection_value">Valor de colección</string>
+    <string name="collector_albums_in_collection">%d álbumes en la colección</string>
 </resources>

@@ -21,61 +21,78 @@ import com.uniandes.vynilapp.viewModels.collections.CollectionsUiState
 import com.uniandes.vynilapp.views.common.CollectorCard
 import com.uniandes.vynilapp.views.common.SearchBar
 
+data class CollectorSelection(val id: Int, val name: String)
+
 @Composable
 fun CollectionsScreen(
     modifier: Modifier = Modifier,
     viewModel: CollectionsViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var searchText by remember { mutableStateOf("") }
+    var selectedCollector by remember { mutableStateOf<CollectorSelection?>(null) }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color(0xFF111120))
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Coleccionista",
-            color = Color.White,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
+    if (selectedCollector != null) {
+        CollectorDetailScreen(
+            onBack = { selectedCollector = null },
+            collectorId = selectedCollector!!.id,
+            modifier = modifier
         )
+    } else {
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        var searchText by remember { mutableStateOf("") }
 
-        SearchBar(
-            value = searchText,
-            onValueChange = { searchText = it },
-            placeholder = "Buscar Coleccionitas"
-        )
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color(0xFF111120))
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Coleccionista",
+                color = Color.White,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            SearchBar(
+                value = searchText,
+                onValueChange = { searchText = it },
+                placeholder = "Buscar Coleccionitas"
+            )
 
-        when (uiState) {
-            is CollectionsUiState.Loading -> {
-                CollectionsLoadingContent()
-            }
+            Spacer(modifier = Modifier.height(16.dp))
 
-            is CollectionsUiState.Success -> {
-                val collectors = (uiState as CollectionsUiState.Success).collectors
-
-                val filteredCollectors = if (searchText.isBlank()) {
-                    collectors
-                } else {
-                    collectors.filter {
-                        it.name.contains(searchText, ignoreCase = true)
-                    }
+            when (uiState) {
+                is CollectionsUiState.Loading -> {
+                    CollectionsLoadingContent()
                 }
 
-                CollectorsList(collectors = filteredCollectors)
-            }
+                is CollectionsUiState.Success -> {
+                    val collectors = (uiState as CollectionsUiState.Success).collectors
 
-            is CollectionsUiState.Error -> {
-                val message = (uiState as CollectionsUiState.Error).message
-                CollectionsErrorContent(
-                    message = message,
-                    onRetry = { viewModel.loadCollectors() }
-                )
+                    val filteredCollectors = if (searchText.isBlank()) {
+                        collectors
+                    } else {
+                        collectors.filter {
+                            it.name.contains(searchText, ignoreCase = true)
+                        }
+                    }
+
+                    CollectorsList(
+                        collectors = filteredCollectors,
+                        onCollectorClick = { collector ->
+                            selectedCollector = CollectorSelection(collector.id, collector.name)
+                        }
+                    )
+                }
+
+                is CollectionsUiState.Error -> {
+                    val message = (uiState as CollectionsUiState.Error).message
+                    CollectionsErrorContent(
+                        message = message,
+                        onRetry = { viewModel.loadCollectors() }
+                    )
+                }
             }
         }
     }
@@ -92,7 +109,10 @@ fun CollectionsLoadingContent() {
 }
 
 @Composable
-fun CollectorsList(collectors: List<Collector>) {
+fun CollectorsList(
+    collectors: List<Collector>,
+    onCollectorClick: (Collector) -> Unit
+) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
@@ -100,7 +120,8 @@ fun CollectorsList(collectors: List<Collector>) {
             CollectorCard(
                 collectorName = collector.name,
                 albumCount = collector.albumCount,
-                imageUrl = collector.imageUrl
+                imageUrl = collector.imageUrl,
+                onClick = { onCollectorClick(collector) }
             )
         }
     }
