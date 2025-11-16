@@ -15,4 +15,8 @@ class AlbumRepository @Inject constructor(
     suspend fun getAlbumById(albumId: Int): Result<Album> {
         return albumServiceAdapter.getAlbumById(albumId)
     }
+
+    suspend fun createAlbum(album: Album): Result<Album> {
+        return albumServiceAdapter.createAlbum(album)
+    }
 }
