@@ -6,6 +6,7 @@ import com.uniandes.vynilapp.model.Performer
 import com.uniandes.vynilapp.model.Track
 import com.uniandes.vynilapp.model.dto.AddCommentResponse
 import com.uniandes.vynilapp.model.dto.AddCommnetDto
+import com.uniandes.vynilapp.model.dto.AlbumCreateDto
 import com.uniandes.vynilapp.model.dto.AlbumDto
 import com.uniandes.vynilapp.model.dto.CommentDto
 import com.uniandes.vynilapp.model.dto.PerformerDto
@@ -106,6 +107,25 @@ class AlbumServiceAdapter(
 
     }
 
+
+    suspend fun createAlbum(album: Album): Result<Album> {
+        return try {
+            val requestDto = convertToAlbumDto(album)
+            val response = apiService.createAlbum(requestDto)
+
+            if (response.isSuccessful && response.body() != null) {
+                val createdDto = response.body()!!
+                val created = convertToAlbum(createdDto)
+                Result.success(created)
+            } else if (response.isSuccessful && response.body() == null) {
+                Result.failure(Exception("Error al crear álbum: respuesta vacía"))
+            } else {
+                Result.failure(Exception("Error al crear álbum: ${response.code()} - ${response.message()} - ${response.errorBody()?.string()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Error de conexión: ${e.message}"))
+        }
+    }
 }
 
 
@@ -150,5 +170,16 @@ private fun convertToComment(commentDto: CommentDto): Comment {
         id = commentDto.id,
         description = commentDto.description,
         rating = commentDto.rating
+    )
+}
+
+private fun convertToAlbumDto(album: Album): AlbumCreateDto {
+    return AlbumCreateDto(
+        name = album.name,
+        cover = album.cover,
+        releaseDate = album.releaseDate,
+        description = album.description,
+        genre = album.genre,
+        recordLabel = album.recordLabel
     )
 }

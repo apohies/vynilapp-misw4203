@@ -1,15 +1,22 @@
 package com.uniandes.vynilapp.views
 
-import android.content.Context
+import android.R
 import android.content.Intent
+import android.text.style.BackgroundColorSpan
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uniandes.vynilapp.model.Album
 import com.uniandes.vynilapp.views.common.AlbumCard
@@ -31,6 +41,18 @@ fun AlbumsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var searchText by remember { mutableStateOf("") }
+    val local_context = LocalContext.current
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+        DisposableEffect(lifecycleOwner) {
+                val observer = LifecycleEventObserver { _, event ->
+                    if (event == Lifecycle.Event.ON_START) {
+                        viewModel.loadAlbums()
+                    }
+                }
+                lifecycleOwner.lifecycle.addObserver(observer)
+                onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+            }
 
     Column(
         modifier = modifier
@@ -39,11 +61,19 @@ fun AlbumsScreen(
             .padding(16.dp)
     ) {
 
-        SearchBar(
-            value = searchText,
-            onValueChange = { searchText = it },
-            placeholder = "Find in albums"
-        )
+        Row(modifier = modifier.fillMaxWidth()) {
+            SearchBar(
+                value = searchText,
+                onValueChange = { searchText = it },
+                placeholder = "Find in albums"
+            )
+            Spacer(Modifier.weight(1f))
+            PlusIconButton(onClick = {
+                val intent = Intent(local_context, AlbumCreateActivity::class.java)
+                local_context.startActivity(intent)
+            })
+
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -112,6 +142,19 @@ fun AlbumsGrid(albums: List<Album>) {
                 }
             )
         }
+    }
+}
+
+@Composable
+fun PlusIconButton(onClick:() -> Unit, modifier: Modifier = Modifier) {
+    FilledIconButton(
+        onClick = onClick,
+        modifier = Modifier.size(48.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Add,
+            contentDescription = "Add" // Content description for accessibility
+        )
     }
 }
 

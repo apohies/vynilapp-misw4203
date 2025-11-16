@@ -1,5 +1,6 @@
 package com.uniandes.vynilapp.model.network
 
+import com.uniandes.vynilapp.model.dto.AlbumCreateDto
 import com.uniandes.vynilapp.model.dto.AddCommentResponse
 import com.uniandes.vynilapp.model.dto.AddCommnetDto
 import com.uniandes.vynilapp.model.dto.AlbumDto
@@ -25,7 +26,7 @@ interface ApiService {
     suspend fun getAlbumById(@Path("id") albumId: Int): Response<AlbumDto>
 
     @POST(ApiConfig.ALBUMS_ENDPOINT)
-    suspend fun createAlbum(@Body album: AlbumDto): Response<AlbumDto>
+    suspend fun createAlbum(@Body album: AlbumCreateDto): Response<AlbumDto>
 
     @PUT(ApiConfig.ALBUM_DETAIL_ENDPOINT)
     suspend fun updateAlbum(

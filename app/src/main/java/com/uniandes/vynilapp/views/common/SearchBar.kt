@@ -26,7 +26,7 @@ fun SearchBar(
 ) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxWidth(0.85f)
             .height(48.dp)
             .background(
                 color = Color(0xFF1E1E2E),

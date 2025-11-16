@@ -17,6 +17,10 @@ class AlbumRepository @Inject constructor(
         return albumServiceAdapter.getAlbumById(albumId)
     }
 
+    suspend fun createAlbum(album: Album): Result<Album> {
+        return albumServiceAdapter.createAlbum(album)
+    }
+
     suspend fun AddCommentToAlbum(albumId: Int , description: String, rating: Int , collectorId: Int): Result<AddCommentResponse> {
         return albumServiceAdapter.addCommentToAlbum(albumId, description, rating, collectorId)
 
