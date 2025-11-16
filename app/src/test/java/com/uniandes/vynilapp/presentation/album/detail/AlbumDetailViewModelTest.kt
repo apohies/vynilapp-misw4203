@@ -346,4 +346,291 @@ class AlbumDetailViewModelTest {
             )
         )
     }
+    @Test
+    fun `addComment should handle repository failure`() = runTest {
+        val exception = Exception("Network error")
+        coEvery {
+            albumRepository.AddCommentToAlbum(
+                albumId = any(),
+                description = any(),
+                rating = any(),
+                collectorId = any()
+            )
+        } returns Result.failure(exception)
+
+        val initialCommentsCount = viewModel.uiState.value.comments.size
+
+        viewModel.onEvent(AlbumDetailEvent.AddComment("Test comment", 5))
+        advanceUntilIdle()
+
+        val updatedUiState = viewModel.uiState.value
+        assertEquals(initialCommentsCount, updatedUiState.comments.size)
+        assertNotNull(updatedUiState.error)
+        assertTrue(updatedUiState.error?.contains("Error al agregar comentario") == true)
+    }
+
+    @Test
+    fun `addComment should not add empty comment`() = runTest {
+        val initialCommentsCount = viewModel.uiState.value.comments.size
+
+        viewModel.onEvent(AlbumDetailEvent.AddComment("", 5))
+        advanceUntilIdle()
+
+        val updatedUiState = viewModel.uiState.value
+        assertEquals(initialCommentsCount, updatedUiState.comments.size)
+
+        coVerify(exactly = 0) {
+            albumRepository.AddCommentToAlbum(any(), any(), any(), any())
+        }
+    }
+
+    @Test
+    fun `addComment should not add comment with only whitespace`() = runTest {
+        val initialCommentsCount = viewModel.uiState.value.comments.size
+
+        viewModel.onEvent(AlbumDetailEvent.AddComment("   ", 5))
+        advanceUntilIdle()
+
+        val updatedUiState = viewModel.uiState.value
+        assertEquals(initialCommentsCount, updatedUiState.comments.size)
+
+        coVerify(exactly = 0) {
+            albumRepository.AddCommentToAlbum(any(), any(), any(), any())
+        }
+    }
+
+    @Test
+    fun `addComment should clear comment text after successful addition`() = runTest {
+        val commentText = "Great album!"
+
+        val mockResponse = AddCommentResponse(
+            id = 999,
+            description = commentText,
+            rating = 4,
+            collector = CollectorDto(
+                id = 100,
+                name = "Test Collector",
+                telephone = "123456",
+                email = "test@test.com",
+                comments = listOf(),
+                favoritePerformers = listOf(),
+                collectorAlbums = listOf()
+            ),
+            album = AlbumDto(
+                id = 100,
+                name = "Test Album",
+                cover = "https://example.com/cover.jpg",
+                releaseDate = "2024-01-01T00:00:00.000Z",
+                description = "Test description",
+                genre = "Rock",
+                recordLabel = "Test Label",
+                tracks = listOf(),
+                performers = listOf(),
+                comments = listOf()
+            )
+        )
+
+        coEvery {
+            albumRepository.AddCommentToAlbum(any(), any(), any(), any())
+        } returns Result.success(mockResponse)
+
+        viewModel.onEvent(AlbumDetailEvent.UpdateCommentText(commentText))
+        assertEquals(commentText, viewModel.uiState.value.newCommentText)
+
+        viewModel.onEvent(AlbumDetailEvent.AddComment(commentText, 4))
+        advanceUntilIdle()
+
+        assertEquals("", viewModel.uiState.value.newCommentText)
+    }
+
+    @Test
+    fun `addComment should handle different rating values`() = runTest {
+        val ratings = listOf(1, 2, 3, 4, 5)
+
+        ratings.forEach { rating ->
+            val mockResponse = AddCommentResponse(
+                id = rating,
+                description = "Comment with rating $rating",
+                rating = rating,
+                collector = CollectorDto(
+                    id = 100,
+                    name = "Test",
+                    telephone = "123",
+                    email = "test@test.com",
+                    comments = listOf(),
+                    favoritePerformers = listOf(),
+                    collectorAlbums = listOf()
+                ),
+                album = AlbumDto(
+                    id = 100,
+                    name = "Test",
+                    cover = "",
+                    releaseDate = "",
+                    description = "",
+                    genre = "",
+                    recordLabel = "",
+                    tracks = listOf(),
+                    performers = listOf(),
+                    comments = listOf()
+                )
+            )
+
+            coEvery {
+                albumRepository.AddCommentToAlbum(any(), any(), eq(rating), any())
+            } returns Result.success(mockResponse)
+
+            viewModel.onEvent(AlbumDetailEvent.AddComment("Test comment", rating))
+            advanceUntilIdle()
+
+            coVerify {
+                albumRepository.AddCommentToAlbum(any(), any(), rating, any())
+            }
+        }
+    }
+
+    @Test
+    fun `addComment should set loading state during API call`() = runTest {
+        val commentText = "Test comment"
+        var wasLoadingSet = false
+
+        val mockResponse = AddCommentResponse(
+            id = 1,
+            description = commentText,
+            rating = 5,
+            collector = CollectorDto(
+                id = 100,
+                name = "Test",
+                telephone = "123",
+                email = "test@test.com",
+                comments = listOf(),
+                favoritePerformers = listOf(),
+                collectorAlbums = listOf()
+            ),
+            album = AlbumDto(
+                id = 100,
+                name = "Test",
+                cover = "",
+                releaseDate = "",
+                description = "",
+                genre = "",
+                recordLabel = "",
+                tracks = listOf(),
+                performers = listOf(),
+                comments = listOf()
+            )
+        )
+
+        coEvery {
+            albumRepository.AddCommentToAlbum(any(), any(), any(), any())
+        } coAnswers {
+            if (viewModel.uiState.value.isLoading) {
+                wasLoadingSet = true
+            }
+            Result.success(mockResponse)
+        }
+
+        viewModel.onEvent(AlbumDetailEvent.AddComment(commentText, 5))
+        advanceUntilIdle()
+
+        assertTrue(wasLoadingSet)
+        assertFalse(viewModel.uiState.value.isLoading)
+    }
+
+    @Test
+    fun `addComment should use correct collectorId`() = runTest {
+        val commentText = "Test comment"
+        val expectedCollectorId = 100
+
+        val mockResponse = AddCommentResponse(
+            id = 1,
+            description = commentText,
+            rating = 5,
+            collector = CollectorDto(
+                id = expectedCollectorId,
+                name = "Test",
+                telephone = "123",
+                email = "test@test.com",
+                comments = listOf(),
+                favoritePerformers = listOf(),
+                collectorAlbums = listOf()
+            ),
+            album = AlbumDto(
+                id = 100,
+                name = "Test",
+                cover = "",
+                releaseDate = "",
+                description = "",
+                genre = "",
+                recordLabel = "",
+                tracks = listOf(),
+                performers = listOf(),
+                comments = listOf()
+            )
+        )
+
+        coEvery {
+            albumRepository.AddCommentToAlbum(any(), any(), any(), any())
+        } returns Result.success(mockResponse)
+
+        viewModel.onEvent(AlbumDetailEvent.AddComment(commentText, 5))
+        advanceUntilIdle()
+
+        coVerify {
+            albumRepository.AddCommentToAlbum(
+                albumId = any(),
+                description = commentText,
+                rating = 5,
+                collectorId = expectedCollectorId
+            )
+        }
+    }
+
+    @Test
+    fun `addComment should trim whitespace from comment text`() = runTest {
+        val commentWithSpaces = "  Test comment with spaces  "
+        val trimmedComment = "Test comment with spaces"
+
+        val mockResponse = AddCommentResponse(
+            id = 1,
+            description = trimmedComment,
+            rating = 5,
+            collector = CollectorDto(
+                id = 100,
+                name = "Test",
+                telephone = "123",
+                email = "test@test.com",
+                comments = listOf(),
+                favoritePerformers = listOf(),
+                collectorAlbums = listOf()
+            ),
+            album = AlbumDto(
+                id = 100,
+                name = "Test",
+                cover = "",
+                releaseDate = "",
+                description = "",
+                genre = "",
+                recordLabel = "",
+                tracks = listOf(),
+                performers = listOf(),
+                comments = listOf()
+            )
+        )
+
+        coEvery {
+            albumRepository.AddCommentToAlbum(any(), any(), any(), any())
+        } returns Result.success(mockResponse)
+
+        viewModel.onEvent(AlbumDetailEvent.AddComment(commentWithSpaces, 5))
+        advanceUntilIdle()
+
+        coVerify {
+            albumRepository.AddCommentToAlbum(
+                albumId = any(),
+                description = trimmedComment,
+                rating = any(),
+                collectorId = any()
+            )
+        }
+    }
 }
