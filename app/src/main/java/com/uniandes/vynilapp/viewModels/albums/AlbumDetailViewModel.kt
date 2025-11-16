@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AlbumDetailViewModel @Inject constructor(
@@ -34,7 +36,7 @@ class AlbumDetailViewModel @Inject constructor(
             is AlbumDetailEvent.ToggleLike -> toggleLike()
             is AlbumDetailEvent.ToggleSave -> toggleSave()
             is AlbumDetailEvent.ShareAlbum -> shareAlbum()
-            is AlbumDetailEvent.AddComment -> addComment(event.comment)
+            is AlbumDetailEvent.AddComment -> addComment(event.comment, event.rating)
             is AlbumDetailEvent.UpdateCommentText -> updateCommentText(event.text)
             is AlbumDetailEvent.AddTrack -> addTrack(event.track)
         }
@@ -118,21 +120,50 @@ class AlbumDetailViewModel @Inject constructor(
         // Por ahora solo actualizamos el estado
     }
 
-    private fun addComment(comment: String) {
+    private fun addComment(comment: String, rating: Int) {
         if (comment.isNotBlank()) {
-            val currentComments = _uiState.value.comments
-            val newCommentId = (currentComments.maxOfOrNull { it.id } ?: 0) + 1
-            
-            val newComment = Comment(
-                id = newCommentId,
-                description = comment.trim(),
-                rating = 5
-            )
-            
-            _uiState.value = _uiState.value.copy(
-                comments = currentComments + newComment,
-                newCommentText = ""
-            )
+            viewModelScope.launch {  // ← Necesitas esto para llamadas suspend
+                _uiState.value = _uiState.value.copy(isLoading = true)
+
+                try {
+                    val result = albumRepository.AddCommentToAlbum(
+                        albumId = currentAlbumId,
+                        description = comment.trim(),
+                        rating = rating,
+                        collectorId = 100
+                    )
+
+                    result.fold(
+                        onSuccess = { addCommentResponse ->
+                            // Convertir AddCommentResponse a Comment
+                            val newComment = Comment(
+                                id = addCommentResponse.id,
+                                description = addCommentResponse.description,
+                                rating = addCommentResponse.rating
+                            )
+
+                            val currentComments = _uiState.value.comments
+                            _uiState.value = _uiState.value.copy(
+                                comments = currentComments + newComment,
+                                newCommentText = "",
+                                isLoading = false,
+                                error = null
+                            )
+                        },
+                        onFailure = { exception ->
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                error = "Error al agregar comentario: ${exception.message}"
+                            )
+                        }
+                    )
+                } catch (e: Exception) {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Error: ${e.message}"
+                    )
+                }
+            }
         }
     }
 

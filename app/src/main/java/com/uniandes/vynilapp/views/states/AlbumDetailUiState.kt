@@ -4,7 +4,7 @@ import com.uniandes.vynilapp.model.Album
 import com.uniandes.vynilapp.model.Comment
 import com.uniandes.vynilapp.model.Track
 
-data class AlbumDetailUiState(
+data class  AlbumDetailUiState(
     val isLoading: Boolean = false,
     val album: Album? = null,
     val tracks: List<Track> = emptyList(),
@@ -24,7 +24,7 @@ sealed class AlbumDetailEvent {
     object ToggleLike : AlbumDetailEvent()
     object ToggleSave : AlbumDetailEvent()
     object ShareAlbum : AlbumDetailEvent()
-    data class AddComment(val comment: String) : AlbumDetailEvent()
+    data class AddComment(val comment: String, val rating: Int) : AlbumDetailEvent()
     data class UpdateCommentText(val text: String) : AlbumDetailEvent()
     data class AddTrack(val track: Track) : AlbumDetailEvent()
 }

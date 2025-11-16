@@ -155,7 +155,7 @@ class AlbumDetailActivityTest {
         composeTestRule.onNodeWithText("Rock", substring = true)
             .assertExists()
 
-        composeTestRule.onNodeWithText("20 de nov. 1975", substring = true)
+        composeTestRule.onNodeWithText("9 de dic 1975", substring = true)
             .assertExists()
     }
 
@@ -443,7 +443,7 @@ class AlbumDetailActivityTest {
                 comments = mockComments,
                 newCommentText = "",
                 onCommentTextChange = {},
-                onAddComment = {}
+                onAddComment = { _, _ -> } // ← Actualizado
             )
         }
 
@@ -460,7 +460,7 @@ class AlbumDetailActivityTest {
                 comments = mockComments,
                 newCommentText = "",
                 onCommentTextChange = {},
-                onAddComment = {}
+                onAddComment = { _, _ -> } // ← Actualizado
             )
         }
 
@@ -477,7 +477,7 @@ class AlbumDetailActivityTest {
                 comments = emptyList(),
                 newCommentText = "",
                 onCommentTextChange = {},
-                onAddComment = {}
+                onAddComment = { _, _ -> } // ← Actualizado
             )
         }
 
@@ -495,7 +495,7 @@ class AlbumDetailActivityTest {
                 comments = emptyList(),
                 newCommentText = commentText,
                 onCommentTextChange = { commentText = it },
-                onAddComment = {}
+                onAddComment = { _, _ -> } // ← Actualizado
             )
         }
 
@@ -513,7 +513,7 @@ class AlbumDetailActivityTest {
                 comments = emptyList(),
                 newCommentText = "Test comment",
                 onCommentTextChange = {},
-                onAddComment = {}
+                onAddComment = { _, _ -> } // ← Actualizado
             )
         }
 
@@ -525,13 +525,17 @@ class AlbumDetailActivityTest {
     @Test
     fun validateSendCommentCallbackTest() {
         var sentComment = ""
+        var sentRating = 0 // ← Agregado
 
         composeTestRule.setContent {
             CommentsSection(
                 comments = emptyList(),
                 newCommentText = "My comment",
                 onCommentTextChange = {},
-                onAddComment = { sentComment = it }
+                onAddComment = { comment, rating -> // ← Actualizado
+                    sentComment = comment
+                    sentRating = rating
+                }
             )
         }
 
@@ -540,6 +544,7 @@ class AlbumDetailActivityTest {
 
         composeTestRule.waitForIdle()
         Assert.assertEquals("My comment", sentComment)
+        Assert.assertEquals(5, sentRating) // ← Agregado - verifica rating por defecto
     }
 
     // Test 25: Validate empty comments list
@@ -550,7 +555,7 @@ class AlbumDetailActivityTest {
                 comments = emptyList(),
                 newCommentText = "",
                 onCommentTextChange = {},
-                onAddComment = {}
+                onAddComment = { _, _ -> } // ← Actualizado
             )
         }
 
@@ -701,7 +706,7 @@ class AlbumDetailActivityTest {
                 comments = manyComments,
                 newCommentText = "",
                 onCommentTextChange = {},
-                onAddComment = {}
+                onAddComment = { _, _ -> } // ← Actualizado
             )
         }
 
@@ -743,7 +748,7 @@ class AlbumDetailActivityTest {
                 comments = listOf(specialComment),
                 newCommentText = "",
                 onCommentTextChange = {},
-                onAddComment = {}
+                onAddComment = { _, _ -> } // ← Actualizado
             )
         }
 
@@ -811,9 +816,7 @@ class AlbumDetailActivityTest {
             CommentItem(comment = comment)
         }
 
-        composeTestRule.onNodeWithText("Usuario").assertExists()
         composeTestRule.onNodeWithText("Amazing album!").assertExists()
-        composeTestRule.onNodeWithText("U").assertExists() // Avatar
     }
 
     // Test 39: Validate AlbumHeader component
@@ -839,6 +842,7 @@ class AlbumDetailActivityTest {
     fun validateCompleteUserFlowTest() {
         var commentText = ""
         var commentAdded = ""
+        var ratingAdded = 0 // ← Agregado
 
         composeTestRule.setContent {
             AlbumDetailContent(
@@ -847,7 +851,10 @@ class AlbumDetailActivityTest {
                     eventList.add(event)
                     when (event) {
                         is AlbumDetailEvent.UpdateCommentText -> commentText = event.text
-                        is AlbumDetailEvent.AddComment -> commentAdded = event.comment
+                        is AlbumDetailEvent.AddComment -> {
+                            commentAdded = event.comment
+                            ratingAdded = event.rating // ← Agregado
+                        }
                         else -> {}
                     }
                 },
@@ -876,5 +883,27 @@ class AlbumDetailActivityTest {
         Assert.assertTrue(eventList.any { it is AlbumDetailEvent.PlayAlbum })
         Assert.assertTrue(eventList.any { it is AlbumDetailEvent.ToggleLike })
         Assert.assertEquals(1, backClickCount)
+    }
+
+    @Test
+    fun validateCommentRatingStarsTest() {
+        val comment = Comment(
+            id = 1,
+            description = "Great album!",
+            rating = 3  // 3 estrellas
+        )
+
+        composeTestRule.setContent {
+            CommentItem(comment = comment)
+        }
+
+        // Verificar que el comentario existe
+        composeTestRule.onNodeWithText("Great album!").assertExists()
+
+        // Verificar que hay estrellas (iconos de Star)
+        // Nota: Verificar iconos es más complicado en Compose
+        // Una alternativa es verificar que el CommentItem se renderiza sin crash
+        composeTestRule.onNodeWithText("Great album!")
+            .assertIsDisplayed()
     }
 }

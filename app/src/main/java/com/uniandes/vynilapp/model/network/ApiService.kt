@@ -1,6 +1,8 @@
 package com.uniandes.vynilapp.model.network
 
 import com.uniandes.vynilapp.model.dto.AlbumCreateDto
+import com.uniandes.vynilapp.model.dto.AddCommentResponse
+import com.uniandes.vynilapp.model.dto.AddCommnetDto
 import com.uniandes.vynilapp.model.dto.AlbumDto
 import com.uniandes.vynilapp.model.dto.ArtistDto
 import com.uniandes.vynilapp.model.dto.CollectorDto
@@ -46,6 +48,13 @@ interface ApiService {
     // ============== COLLECTORS ===============
     @GET(ApiConfig.COLLECTORS_ENDPOINT)
     suspend fun getAllCollectors(): Response<List<CollectorDto>>
+
+
+    @POST(ApiConfig.ADD_COMMENT_ENDPOINT)
+    suspend fun addCommentToAlbum(
+        @Path("albumId") albumId: Int,
+        @Body comment: AddCommnetDto
+    ): Response<AddCommentResponse>
 
     @GET(ApiConfig.COLLECTORS_DETAIL_ENDPOINT)
     suspend fun getCollectorById(@Path("id") collectorId: Int): Response<CollectorDto>
