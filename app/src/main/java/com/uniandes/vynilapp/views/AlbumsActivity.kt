@@ -24,6 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.uniandes.vynilapp.model.Album
 import com.uniandes.vynilapp.views.common.AlbumCard
@@ -39,6 +42,17 @@ fun AlbumsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var searchText by remember { mutableStateOf("") }
     val local_context = LocalContext.current
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+        DisposableEffect(lifecycleOwner) {
+                val observer = LifecycleEventObserver { _, event ->
+                    if (event == Lifecycle.Event.ON_START) {
+                        viewModel.loadAlbums()
+                    }
+                }
+                lifecycleOwner.lifecycle.addObserver(observer)
+                onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+            }
 
     Column(
         modifier = modifier
