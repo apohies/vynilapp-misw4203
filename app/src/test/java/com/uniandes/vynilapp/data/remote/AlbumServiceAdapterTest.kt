@@ -209,6 +209,96 @@ class AlbumServiceAdapterTest {
         coVerify { apiService.getAllAlbums() }
     }
 
+    @Test
+    fun `createAlbum should return success when API call is successful`() = runBlocking {
+        // Arrange
+        val albumDto = createSampleAlbumDto()
+        val response = mockk<Response<AlbumDto>>()
+        every { response.isSuccessful } returns true
+        every { response.body() } returns albumDto
+        coEvery { apiService.createAlbum(any()) } returns response
+
+        // Build an Album object matching fields (only fields used by convertToAlbumDto)
+        val albumToCreate = com.uniandes.vynilapp.model.Album(
+            id = 0,
+            name = albumDto.name,
+            cover = albumDto.cover,
+            releaseDate = albumDto.releaseDate,
+            description = albumDto.description,
+            genre = albumDto.genre,
+            recordLabel = albumDto.recordLabel,
+            tracks = emptyList(),
+            performers = emptyList(),
+            comments = emptyList()
+        )
+
+        // Act
+        val result = albumServiceAdapter.createAlbum(albumToCreate)
+
+        // Assert
+        assertTrue(result.isSuccess)
+        val created = result.getOrNull()
+        assertNotNull(created)
+        assertEquals(albumDto.id, created?.id)
+        assertEquals(albumDto.name, created?.name)
+        assertEquals(albumDto.cover, created?.cover)
+        assertEquals(albumDto.releaseDate, created?.releaseDate)
+        assertEquals(albumDto.description, created?.description)
+        assertEquals(albumDto.genre, created?.genre)
+        assertEquals(albumDto.recordLabel, created?.recordLabel)
+
+        coVerify { apiService.createAlbum(any()) }
+    }
+
+    @Test
+    fun `createAlbum should return failure when response body is null`() = runBlocking {
+        // Arrange
+        val response = mockk<Response<AlbumDto>>()
+        every { response.isSuccessful } returns true
+        every { response.body() } returns null
+        coEvery { apiService.createAlbum(any()) } returns response
+
+        val albumToCreate = com.uniandes.vynilapp.model.Album(
+            id = 0, name = "X", cover = "", releaseDate = "", description = "", genre = "", recordLabel = "",
+            tracks = emptyList(), performers = emptyList(), comments = emptyList()
+        )
+
+        // Act
+        val result = albumServiceAdapter.createAlbum(albumToCreate)
+
+        // Assert
+        assertTrue(result.isFailure)
+        val exception = result.exceptionOrNull()
+        assertNotNull(exception)
+        assertTrue(exception?.message?.contains("respuesta vacía") == true)
+
+        coVerify { apiService.createAlbum(any()) }
+    }
+
+    @Test
+    fun `createAlbum should return failure when API throws exception`() = runBlocking {
+        // Arrange
+        val exception = Exception("Network down")
+        coEvery { apiService.createAlbum(any()) } throws exception
+
+        val albumToCreate = com.uniandes.vynilapp.model.Album(
+            id = 0, name = "X", cover = "", releaseDate = "", description = "", genre = "", recordLabel = "",
+            tracks = emptyList(), performers = emptyList(), comments = emptyList()
+        )
+
+        // Act
+        val result = albumServiceAdapter.createAlbum(albumToCreate)
+
+        // Assert
+        assertTrue(result.isFailure)
+        val resultEx = result.exceptionOrNull()
+        assertNotNull(resultEx)
+        assertTrue(resultEx?.message?.contains("Error de conexión") == true)
+        assertTrue(resultEx?.message?.contains("Network down") == true)
+
+        coVerify { apiService.createAlbum(any()) }
+    }
+
     // Helper methods to create test data
     private fun createSampleAlbumDto(): AlbumDto {
         return AlbumDto(

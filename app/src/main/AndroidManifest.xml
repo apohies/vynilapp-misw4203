@@ -14,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Vynilapp">
+        <profileable android:shell="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -29,6 +30,10 @@
             android:exported="false"
             android:label="Detalle del Álbum"
             android:theme="@style/Theme.Vynilapp" />
+        <activity android:name=".views.AlbumCreateActivity"
+            android:exported="false"
+            android:label="Crear Álbum"
+            android:theme="@style/Theme.Vynilapp"/>
     </application>
 
 </manifest>
