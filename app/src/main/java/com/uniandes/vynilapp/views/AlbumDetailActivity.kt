@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -161,7 +162,7 @@ fun AlbumDetailContent(
                 comments = uiState.comments,
                 newCommentText = uiState.newCommentText,
                 onCommentTextChange = { text -> onEvent(AlbumDetailEvent.UpdateCommentText(text)) },
-                onAddComment = { comment -> onEvent(AlbumDetailEvent.AddComment(comment)) }
+                onAddComment = { comment, rating -> onEvent(AlbumDetailEvent.AddComment(comment, rating)) }
             )
         }
         
@@ -436,8 +437,10 @@ fun CommentsSection(
     comments: List<Comment>,
     newCommentText: String,
     onCommentTextChange: (String) -> Unit,
-    onAddComment: (String) -> Unit
+    onAddComment: (String, Int) -> Unit
 ) {
+    var selectedRating by remember { mutableStateOf(5) }
+
     Column {
         Text(
             text = "Comentarios",
@@ -446,121 +449,143 @@ fun CommentsSection(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 12.dp)
         )
-        
+
         comments.forEach { comment ->
             CommentItem(comment = comment)
         }
-        
-        // Campo para agregar comentario
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+
+        // Sección para agregar comentario
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(
-                value = newCommentText,
-                onValueChange = onCommentTextChange,
-                placeholder = {
-                    Text(
-                        text = "Añadir un comentario...",
-                        color = Color.Gray
-                    )
-                },
-                modifier = Modifier.weight(1f),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.Gray,
-                    unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                shape = RoundedCornerShape(20.dp)
-            )
-            
-            Spacer(modifier = Modifier.width(8.dp))
-            
-            IconButton(
-                onClick = { 
-                    if (newCommentText.isNotBlank()) {
-                        onAddComment(newCommentText)
-                    }
-                },
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(
-                        Color(0xFF9C27B0),
-                        CircleShape
-                    )
-            ) {
-                Icon(
-                    Icons.Default.Send,
-                    contentDescription = "Enviar",
-                    tint = Color.White,
-                    modifier = Modifier.size(20.dp)
+            // Selector de estrellas
+            Column {
+                Text(
+                    text = "Tu calificación",
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(bottom = 4.dp)
                 )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    repeat(5) { index ->
+                        Icon(
+                            imageVector = if (index < selectedRating) {
+                                Icons.Default.Star
+                            } else {
+                                Icons.Default.StarBorder
+                            },
+                            contentDescription = "Star ${index + 1}",
+                            tint = if (index < selectedRating) {
+                                Color(0xFFFFD700)
+                            } else {
+                                Color.Gray
+                            },
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clickable { selectedRating = index + 1 }
+                        )
+                    }
+                }
+            }
+
+            // Campo de texto y botón enviar
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = newCommentText,
+                    onValueChange = onCommentTextChange,
+                    placeholder = {
+                        Text(
+                            text = "Añadir un comentario...",
+                            color = Color.Gray
+                        )
+                    },
+                    modifier = Modifier.weight(1f),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color.Gray,
+                        unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f),
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(20.dp)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                IconButton(
+                    onClick = {
+                        if (newCommentText.isNotBlank()) {
+                            onAddComment(newCommentText, selectedRating)
+                        }
+                    },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(
+                            Color(0xFF9C27B0),
+                            CircleShape
+                        )
+                ) {
+                    Icon(
+                        Icons.Default.Send,
+                        contentDescription = "Enviar",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }
 }
-
 @Composable
 fun CommentItem(comment: Comment) {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        // Avatar del usuario
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(Color.Gray)
-        ) {
-            Text(
-                text = "U",
-                modifier = Modifier.align(Alignment.Center),
-                color = Color.White,
-                fontSize = 12.sp
+            .padding(vertical = 8.dp)
+            .background(
+                Color(0xFFE1BEE7).copy(alpha = 0.2f),
+                RoundedCornerShape(12.dp)
             )
-        }
-        
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
+            .padding(16.dp)
+    ) {
+        Column {
+
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(bottom = 8.dp)
             ) {
-                Text(
-                    text = "Usuario",
-                    color = Color.White,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                
-                Text(
-                    text = "Hace 2 días",
-                    color = Color.Gray,
-                    fontSize = 12.sp
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(4.dp))
-            
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        Color(0xFFE1BEE7).copy(alpha = 0.3f),
-                        RoundedCornerShape(12.dp)
+                repeat(5) { index ->
+                    Icon(
+                        imageVector = if (index < comment.rating) {
+                            Icons.Default.Star
+                        } else {
+                            Icons.Default.StarBorder
+                        },
+                        contentDescription = null,
+                        tint = if (index < comment.rating) {
+                            Color(0xFFFFD700)
+                        } else {
+                            Color.Gray
+                        },
+                        modifier = Modifier.size(16.dp)
                     )
-                    .padding(12.dp)
-            ) {
-                Text(
-                    text = comment.description,
-                    color = Color.White,
-                    fontSize = 14.sp
-                )
+                }
             }
+
+
+            Text(
+                text = comment.description,
+                color = Color.White,
+                fontSize = 14.sp,
+                lineHeight = 20.sp
+            )
         }
     }
 }

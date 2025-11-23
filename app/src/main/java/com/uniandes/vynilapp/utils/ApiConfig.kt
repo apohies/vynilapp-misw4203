@@ -15,6 +15,9 @@ object ApiConfig {
     const val ARTIST_DETAIL_ENDPOINT = "musicians/{id}"
     
     const val COLLECTORS_ENDPOINT = "collectors"
+
+    const val ADD_COMMENT_ENDPOINT = "albums/{albumId}/comments"
+
     const val COLLECTORS_DETAIL_ENDPOINT = "collectors/{id}"
     const val COLLECTORS_DETAIL_ALBUMS_ENDPOINT = "collectors/{id}/albums"
 
