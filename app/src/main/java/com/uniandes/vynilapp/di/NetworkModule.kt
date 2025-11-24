@@ -8,6 +8,7 @@ import com.uniandes.vynilapp.model.repository.ArtistRepository
 import com.uniandes.vynilapp.model.services.ArtistServiceAdapter
 import com.uniandes.vynilapp.model.services.CollectorServiceAdapter
 import com.uniandes.vynilapp.model.repository.CollectorRepository
+import com.uniandes.vynilapp.utils.CacheManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,10 +25,11 @@ object NetworkModule {
         return RetrofitClient.apiService
     }
 
+
     @Provides
     @Singleton
-    fun provideAlbumServiceAdapter(apiService: ApiService): AlbumServiceAdapter {
-        return AlbumServiceAdapter(apiService)
+    fun provideAlbumServiceAdapter(apiService: ApiService, cacheManager: CacheManager): AlbumServiceAdapter {
+        return AlbumServiceAdapter(apiService, cacheManager)
     }
 
     @Provides

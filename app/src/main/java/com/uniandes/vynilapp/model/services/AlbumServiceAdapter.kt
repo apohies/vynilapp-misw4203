@@ -12,13 +12,15 @@ import com.uniandes.vynilapp.model.dto.CommentDto
 import com.uniandes.vynilapp.model.dto.PerformerDto
 import com.uniandes.vynilapp.model.dto.TrackDto
 import com.uniandes.vynilapp.model.network.ApiService
+import com.uniandes.vynilapp.utils.CacheManager
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class AlbumServiceAdapter(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val cacheManager: CacheManager
 ) {
 
     suspend fun getAlbumById(albumId: Int): Result<Album> {
@@ -46,12 +48,21 @@ class AlbumServiceAdapter(
     }
 
     suspend fun getAllAlbums(): Result<List<Album>> {
+        // Primero verificar si hay datos en el cache
+        val cachedAlbums = cacheManager.getAlbums()
+        if (cachedAlbums != null && cachedAlbums.isNotEmpty()) {
+            return Result.success(cachedAlbums)
+        }
+
+        // Si no hay cache, hacer el request
         return try {
             val response = apiService.getAllAlbums()
 
             if (response.isSuccessful && response.body() != null) {
                 val albumDtos = response.body()!!
                 val albums = albumDtos.map { albumDto -> convertToAlbum(albumDto) }
+                // Guardar en cache después de obtener los datos
+                cacheManager.addAlbums(albums)
                 Result.success(albums)
             } else if (response.isSuccessful && response.body() == null) {
                 Result.failure(
@@ -116,6 +127,8 @@ class AlbumServiceAdapter(
             if (response.isSuccessful && response.body() != null) {
                 val createdDto = response.body()!!
                 val created = convertToAlbum(createdDto)
+                // Invalidar el cache para que la próxima carga obtenga la lista actualizada
+                cacheManager.clearAlbums()
                 Result.success(created)
             } else if (response.isSuccessful && response.body() == null) {
                 Result.failure(Exception("Error al crear álbum: respuesta vacía"))
