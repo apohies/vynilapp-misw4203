@@ -6,6 +6,7 @@ import com.uniandes.vynilapp.model.dto.PerformerDto
 import com.uniandes.vynilapp.model.dto.TrackDto
 import com.uniandes.vynilapp.model.network.ApiService
 import com.uniandes.vynilapp.model.services.AlbumServiceAdapter
+import com.uniandes.vynilapp.utils.CacheManager
 import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -16,12 +17,14 @@ import retrofit2.Response
 class AlbumServiceAdapterTest {
 
     private lateinit var apiService: ApiService
+    private lateinit var cacheManager: CacheManager
     private lateinit var albumServiceAdapter: AlbumServiceAdapter
 
     @Before
     fun setup() {
         apiService = mockk()
-        albumServiceAdapter = AlbumServiceAdapter(apiService)
+        cacheManager = mockk()
+        albumServiceAdapter = AlbumServiceAdapter(apiService, cacheManager)
     }
 
     @Test
@@ -129,6 +132,8 @@ class AlbumServiceAdapterTest {
         
         every { response.isSuccessful } returns true
         every { response.body() } returns albumDtos
+        every { cacheManager.getAlbums() } returns null
+        every { cacheManager.addAlbums(any()) } just Runs
         coEvery { apiService.getAllAlbums() } returns response
 
         
@@ -143,6 +148,42 @@ class AlbumServiceAdapterTest {
         assertEquals(albumDtos[1].id, albums?.get(1)?.id)
         
         coVerify { apiService.getAllAlbums() }
+        verify { cacheManager.addAlbums(any()) }
+    }
+
+    @Test
+    fun `getAllAlbums should return cached albums when cache is available`() = runBlocking {
+        
+        val cachedAlbums = listOf(
+            com.uniandes.vynilapp.model.Album(
+                id = 100,
+                name = "Cached Album",
+                cover = "https://example.com/cover.jpg",
+                releaseDate = "1984-08-01T00:00:00.000Z",
+                description = "Cached description",
+                genre = "Salsa",
+                recordLabel = "Elektra",
+                tracks = emptyList(),
+                performers = emptyList(),
+                comments = emptyList()
+            )
+        )
+        
+        every { cacheManager.getAlbums() } returns cachedAlbums
+
+        
+        val result = albumServiceAdapter.getAllAlbums()
+
+        
+        assertTrue(result.isSuccess)
+        val albums = result.getOrNull()
+        assertNotNull(albums)
+        assertEquals(1, albums?.size)
+        assertEquals(cachedAlbums[0].id, albums?.get(0)?.id)
+        assertEquals(cachedAlbums[0].name, albums?.get(0)?.name)
+        
+        // Verify that API was not called
+        coVerify(exactly = 0) { apiService.getAllAlbums() }
     }
 
     @Test
@@ -153,6 +194,7 @@ class AlbumServiceAdapterTest {
         every { response.isSuccessful } returns false
         every { response.code() } returns 500
         every { response.message() } returns "Internal Server Error"
+        every { cacheManager.getAlbums() } returns null
         coEvery { apiService.getAllAlbums() } returns response
 
         
@@ -173,6 +215,7 @@ class AlbumServiceAdapterTest {
         
         val exception = Exception("Connection timeout")
         
+        every { cacheManager.getAlbums() } returns null
         coEvery { apiService.getAllAlbums() } throws exception
 
         
@@ -195,6 +238,7 @@ class AlbumServiceAdapterTest {
         
         every { response.isSuccessful } returns true
         every { response.body() } returns null
+        every { cacheManager.getAlbums() } returns null
         coEvery { apiService.getAllAlbums() } returns response
 
         
