@@ -6,6 +6,8 @@ import com.uniandes.vynilapp.model.Performer
 import com.uniandes.vynilapp.model.Track
 import com.uniandes.vynilapp.model.dto.AddCommentResponse
 import com.uniandes.vynilapp.model.dto.AddCommnetDto
+import com.uniandes.vynilapp.model.dto.AddTrackDto
+import com.uniandes.vynilapp.model.dto.AddTrackResponseDto
 import com.uniandes.vynilapp.model.dto.AlbumCreateDto
 import com.uniandes.vynilapp.model.dto.AlbumDto
 import com.uniandes.vynilapp.model.dto.CommentDto
@@ -139,7 +141,44 @@ class AlbumServiceAdapter(
             Result.failure(Exception("Error de conexión: ${e.message}"))
         }
     }
+
+
+
+    suspend fun addTrackToAlbum(albumId: Int, track: Track): Result<Track> {
+        return try {
+            var trackDto = convertToTrackDto(track)
+
+            var e = AddTrackDto(
+                name = trackDto.name,
+                duration = trackDto.duration
+            )
+
+            val response = apiService.addTrackToAlbum(albumId, e)
+
+            if (response.isSuccessful && response.body() != null) {
+                val trackResponse = response.body()!!
+
+
+                val savedTrack = Track(
+                    id = trackResponse.id,
+                    name = trackResponse.name,
+                    duration = trackResponse.duration
+                )
+
+                Result.success(savedTrack)
+            } else if (response.isSuccessful && response.body() == null) {
+                Result.failure(Exception("Error al agregar track: respuesta vacía"))
+            } else {
+                Result.failure(Exception("Error al agregar track: ${response.code()} - ${response.message()} - ${response.errorBody()?.string()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Error de conexión: ${e.message}"))
+        }
+
+
 }
+
+
 
 
 
@@ -195,4 +234,14 @@ private fun convertToAlbumDto(album: Album): AlbumCreateDto {
         genre = album.genre,
         recordLabel = album.recordLabel
     )
+}
+
+private fun convertToTrackDto(track: Track): TrackDto {
+    return TrackDto(
+        id = track.id,
+        name = track.name,
+        duration = track.duration
+    )
+
+}
 }

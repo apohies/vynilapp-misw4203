@@ -45,6 +45,16 @@ data class TrackDto(
     val duration: String
 )
 
+data class AddTrackDto(
+
+    @SerializedName("name")
+    val name: String,
+
+    @SerializedName("duration")
+    val duration: String)
+
+
+
 data class PerformerDto(
     @SerializedName("id")
     val id: Int,
@@ -95,4 +105,20 @@ data class AlbumCreateDto(
 
     @SerializedName("recordLabel")
     val recordLabel: String,
+)
+
+data class AddTrackResponseDto(
+    @SerializedName("id")
+    val id: Int,
+
+    @SerializedName("name")
+    val name: String,
+
+    @SerializedName("duration")
+    val duration: String,
+
+    @SerializedName("album")
+    var album: AlbumDto,
+
+
 )
