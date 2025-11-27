@@ -35,6 +35,8 @@ import com.uniandes.vynilapp.ui.theme.VynilappTheme
 import com.uniandes.vynilapp.utils.DateUtils
 import com.uniandes.vynilapp.utils.NetworkUtils
 import com.uniandes.vynilapp.viewModels.albums.AlbumDetailViewModel
+import com.uniandes.vynilapp.views.common.AddTrackDialog
+
 import com.uniandes.vynilapp.views.common.ErrorScreen
 import com.uniandes.vynilapp.views.common.LoadingScreen
 import com.uniandes.vynilapp.views.common.OfflineErrorScreen
@@ -83,7 +85,7 @@ fun AlbumDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     
-    // Cargar datos cuando se inicializa la pantalla
+
     LaunchedEffect(albumId) {
         viewModel.onEvent(AlbumDetailEvent.LoadAlbumById(albumId))
     }
@@ -333,11 +335,15 @@ fun AlbumHeader(
     }
 }
 
+// En AlbumDetailActivity.kt - Reemplazar la función SongsSection
+
 @Composable
 fun SongsSection(
     tracks: List<Track>,
     onAddTrack: (Track) -> Unit
 ) {
+    var showAddTrackDialog by remember { mutableStateOf(false) }
+
     Column {
         Text(
             text = "Lista de Canciones",
@@ -346,21 +352,14 @@ fun SongsSection(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 12.dp)
         )
-        
+
         tracks.forEach { track ->
             SongItem(track = track)
         }
-        
+
         // Botón para agregar canción
         OutlinedButton(
-            onClick = { 
-                val newTrack = Track(
-                    id = tracks.size + 1,
-                    name = "Nueva Canción",
-                    duration = "0:00"
-                )
-                onAddTrack(newTrack)
-            },
+            onClick = { showAddTrackDialog = true },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -381,6 +380,22 @@ fun SongsSection(
                 color = Color.Gray
             )
         }
+    }
+
+    // Mostrar el diálogo cuando sea necesario
+    if (showAddTrackDialog) {
+        AddTrackDialog(
+            onDismiss = { showAddTrackDialog = false },
+            onConfirm = { trackName, duration ->
+                val newTrack = Track(
+                    id = 0,
+                    name = trackName,
+                    duration = duration
+                )
+                onAddTrack(newTrack)
+                showAddTrackDialog = false
+            }
+        )
     }
 }
 
@@ -432,7 +447,7 @@ fun SongItem(track: Track) {
     }
 }
 
-@Composable
+    @Composable
 fun CommentsSection(
     comments: List<Comment>,
     newCommentText: String,

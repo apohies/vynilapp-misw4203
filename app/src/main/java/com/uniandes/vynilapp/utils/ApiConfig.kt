@@ -21,6 +21,8 @@ object ApiConfig {
     const val COLLECTORS_DETAIL_ENDPOINT = "collectors/{id}"
     const val COLLECTORS_DETAIL_ALBUMS_ENDPOINT = "collectors/{id}/albums"
 
+    const val ADD_TRACK_ENDPOINT = "albums/{albumId}/tracks"
+
     const val CONNECT_TIMEOUT_SECONDS = 30L
     const val READ_TIMEOUT_SECONDS = 30L
     const val WRITE_TIMEOUT_SECONDS = 30L
