@@ -633,4 +633,304 @@ class AlbumDetailViewModelTest {
             )
         }
     }
+
+    // Agregar estos tests a AlbumDetailViewModelTest.kt
+
+    @Test
+    fun `addTrack should add track to tracks list`() = runTest {
+        // Given
+        val trackName = "Decisiones"
+        val trackDuration = "5:05"
+        val track = Track(
+            id = 0,
+            name = trackName,
+            duration = trackDuration
+        )
+
+        val savedTrack = Track(
+            id = 999,
+            name = trackName,
+            duration = trackDuration
+        )
+
+        coEvery {
+            albumRepository.addTrackToAlbum(
+                albumId = any(),
+                track = any()
+            )
+        } returns Result.success(savedTrack)
+
+        val initialTracksCount = viewModel.uiState.value.tracks.size
+
+
+        viewModel.onEvent(AlbumDetailEvent.AddTrack(track))
+        advanceUntilIdle()
+
+
+        val updatedUiState = viewModel.uiState.value
+        assertEquals(initialTracksCount + 1, updatedUiState.tracks.size)
+        assertTrue(updatedUiState.tracks.any { it.name == trackName })
+
+        coVerify {
+            albumRepository.addTrackToAlbum(
+                albumId = any(),
+                track = track
+            )
+        }
+    }
+
+    @Test
+    fun `addTrack should add track immediately with optimistic update`() = runTest {
+        // Given
+        val track = Track(
+            id = 0,
+            name = "Test Track",
+            duration = "3:45"
+        )
+
+        val savedTrack = Track(
+            id = 999,
+            name = "Test Track",
+            duration = "3:45"
+        )
+
+
+        coEvery {
+            albumRepository.addTrackToAlbum(any(), any())
+        } coAnswers {
+            kotlinx.coroutines.delay(100)
+            Result.success(savedTrack)
+        }
+
+        val initialTracksCount = viewModel.uiState.value.tracks.size
+
+
+        viewModel.onEvent(AlbumDetailEvent.AddTrack(track))
+
+
+        val uiStateBeforeApiResponse = viewModel.uiState.value
+        assertEquals(initialTracksCount + 1, uiStateBeforeApiResponse.tracks.size)
+
+        advanceUntilIdle()
+
+
+        val uiStateAfterApiResponse = viewModel.uiState.value
+        assertEquals(initialTracksCount + 1, uiStateAfterApiResponse.tracks.size)
+        assertTrue(uiStateAfterApiResponse.tracks.any { it.id == 999 })
+    }
+
+    @Test
+    fun `addTrack should replace temporary track with server track on success`() = runTest {
+
+        val track = Track(
+            id = 0,
+            name = "Test Track",
+            duration = "3:45"
+        )
+
+        val savedTrack = Track(
+            id = 999,
+            name = "Test Track",
+            duration = "3:45"
+        )
+
+        coEvery {
+            albumRepository.addTrackToAlbum(any(), any())
+        } returns Result.success(savedTrack)
+
+
+        viewModel.onEvent(AlbumDetailEvent.AddTrack(track))
+        advanceUntilIdle()
+
+        val updatedUiState = viewModel.uiState.value
+        assertTrue(updatedUiState.tracks.any { it.id == 999 })
+        assertFalse(updatedUiState.tracks.any { it.id == 0 })
+    }
+
+    @Test
+    fun `addTrack should keep track in list when repository fails`() = runTest {
+
+        val track = Track(
+            id = 0,
+            name = "Test Track",
+            duration = "3:45"
+        )
+
+        val exception = Exception("Network error")
+        coEvery {
+            albumRepository.addTrackToAlbum(any(), any())
+        } returns Result.failure(exception)
+
+        val initialTracksCount = viewModel.uiState.value.tracks.size
+
+
+        viewModel.onEvent(AlbumDetailEvent.AddTrack(track))
+        advanceUntilIdle()
+
+
+        val updatedUiState = viewModel.uiState.value
+        assertEquals(initialTracksCount + 1, updatedUiState.tracks.size)
+        assertTrue(updatedUiState.tracks.any { it.name == "Test Track" })
+        assertNull(updatedUiState.error)
+    }
+
+    @Test
+    fun `addTrack should generate sequential IDs for temporary tracks`() = runTest {
+
+        val track1 = Track(id = 0, name = "Track 1", duration = "3:00")
+        val track2 = Track(id = 0, name = "Track 2", duration = "4:00")
+
+        coEvery {
+            albumRepository.addTrackToAlbum(any(), any())
+        } returns Result.failure(Exception("Network error"))
+
+
+        viewModel.onEvent(AlbumDetailEvent.AddTrack(track1))
+        viewModel.onEvent(AlbumDetailEvent.AddTrack(track2))
+        advanceUntilIdle()
+
+
+        val tracks = viewModel.uiState.value.tracks
+        val track1InList = tracks.find { it.name == "Track 1" }
+        val track2InList = tracks.find { it.name == "Track 2" }
+
+        assertNotNull(track1InList)
+        assertNotNull(track2InList)
+        assertNotEquals(track1InList?.id, track2InList?.id)
+    }
+
+    @Test
+    fun `addTrack should handle multiple tracks being added quickly`() = runTest {
+
+        val tracks = listOf(
+            Track(id = 0, name = "Track 1", duration = "3:00"),
+            Track(id = 0, name = "Track 2", duration = "4:00"),
+            Track(id = 0, name = "Track 3", duration = "5:00")
+        )
+
+        var callCount = 0
+        coEvery {
+            albumRepository.addTrackToAlbum(any(), any())
+        } coAnswers {
+            callCount++
+            Result.success(Track(
+                id = 900 + callCount,
+                name = secondArg<Track>().name,
+                duration = secondArg<Track>().duration
+            ))
+        }
+
+        val initialCount = viewModel.uiState.value.tracks.size
+
+
+        tracks.forEach { track ->
+            viewModel.onEvent(AlbumDetailEvent.AddTrack(track))
+        }
+        advanceUntilIdle()
+
+
+        val updatedUiState = viewModel.uiState.value
+        assertEquals(initialCount + 3, updatedUiState.tracks.size)
+        assertTrue(updatedUiState.tracks.any { it.name == "Track 1" })
+        assertTrue(updatedUiState.tracks.any { it.name == "Track 2" })
+        assertTrue(updatedUiState.tracks.any { it.name == "Track 3" })
+    }
+
+    @Test
+    fun `addTrack should not set loading state`() = runTest {
+
+        val track = Track(id = 0, name = "Test Track", duration = "3:45")
+
+        coEvery {
+            albumRepository.addTrackToAlbum(any(), any())
+        } coAnswers {
+            kotlinx.coroutines.delay(50)
+            Result.success(Track(id = 999, name = "Test Track", duration = "3:45"))
+        }
+
+
+        viewModel.onEvent(AlbumDetailEvent.AddTrack(track))
+
+
+        assertFalse(viewModel.uiState.value.isLoading)
+
+        advanceUntilIdle()
+
+        assertFalse(viewModel.uiState.value.isLoading)
+    }
+
+    @Test
+    fun `addTrack should use correct albumId from current state`() = runTest {
+
+        val albumId = 123
+        val album = createSampleAlbum()
+        val track = Track(id = 0, name = "Test Track", duration = "3:45")
+
+        coEvery { albumRepository.getAlbumById(albumId) } returns Result.success(album)
+        coEvery { albumRepository.addTrackToAlbum(any(), any()) } returns Result.success(track)
+
+
+        viewModel.loadAlbumById(albumId)
+        viewModel.onEvent(AlbumDetailEvent.AddTrack(track))
+        advanceUntilIdle()
+
+
+        coVerify {
+            albumRepository.addTrackToAlbum(
+                albumId = albumId,
+                track = track
+            )
+        }
+    }
+
+    @Test
+    fun `addTrack should trim track name`() = runTest {
+
+        val trackWithSpaces = Track(
+            id = 0,
+            name = "  Test Track  ",
+            duration = "3:45"
+        )
+
+        val savedTrack = Track(
+            id = 999,
+            name = "Test Track",
+            duration = "3:45"
+        )
+
+        coEvery {
+            albumRepository.addTrackToAlbum(any(), any())
+        } returns Result.success(savedTrack)
+
+
+        viewModel.onEvent(AlbumDetailEvent.AddTrack(trackWithSpaces))
+        advanceUntilIdle()
+
+
+        val tracks = viewModel.uiState.value.tracks
+        assertFalse(tracks.any { it.name.startsWith(" ") || it.name.endsWith(" ") })
+    }
+
+    @Test
+    fun `addTrack should handle exception during API call`() = runTest {
+
+        val track = Track(id = 0, name = "Test Track", duration = "3:45")
+
+        coEvery {
+            albumRepository.addTrackToAlbum(any(), any())
+        } throws RuntimeException("Unexpected error")
+
+        val initialCount = viewModel.uiState.value.tracks.size
+
+
+        viewModel.onEvent(AlbumDetailEvent.AddTrack(track))
+        advanceUntilIdle()
+
+
+        val updatedUiState = viewModel.uiState.value
+        assertEquals(initialCount + 1, updatedUiState.tracks.size)
+        assertNull(updatedUiState.error)
+    }
+
+
 }

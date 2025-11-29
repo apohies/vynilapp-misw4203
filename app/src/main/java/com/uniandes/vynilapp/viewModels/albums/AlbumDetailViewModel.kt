@@ -41,7 +41,7 @@ class AlbumDetailViewModel @Inject constructor(
             is AlbumDetailEvent.AddTrack -> addTrack(event.track)
         }
     }
-    
+
     /**
      * Carga un álbum específico por ID
      */
@@ -49,12 +49,12 @@ class AlbumDetailViewModel @Inject constructor(
         currentAlbumId = albumId
         loadAlbum()
     }
-    
+
     /**
      * Obtiene el ID del álbum actual
      */
     fun getCurrentAlbumId(): Int = currentAlbumId
-    
+
     /**
      * Refresca los datos del álbum actual
      */
@@ -65,10 +65,10 @@ class AlbumDetailViewModel @Inject constructor(
     private fun loadAlbum() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            
+
             try {
                 val result = albumRepository.getAlbumById(currentAlbumId)
-                
+
                 result.fold(
                     onSuccess = { album ->
                         _uiState.value = _uiState.value.copy(
@@ -171,18 +171,53 @@ class AlbumDetailViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(newCommentText = text)
     }
 
+
     private fun addTrack(track: Track) {
+
         val currentTracks = _uiState.value.tracks
         val newTrackId = (currentTracks.maxOfOrNull { it.id } ?: 0) + 1
-        
-        val newTrack = Track(
+
+        val tempTrack = Track(
             id = newTrackId,
-            name = track.name.trim(),
+            name = track.name,
             duration = track.duration
         )
-        
+
+
         _uiState.value = _uiState.value.copy(
-            tracks = currentTracks + newTrack
+            tracks = currentTracks + tempTrack
         )
+
+
+        viewModelScope.launch {
+            try {
+                val result = albumRepository.addTrackToAlbum(currentAlbumId, track)
+
+                result.fold(
+                    onSuccess = { savedTrack ->
+
+                        val updatedTracks = _uiState.value.tracks.map {
+                            if (it.id == tempTrack.id) savedTrack else it
+                        }
+                        _uiState.value = _uiState.value.copy(
+                            tracks = updatedTracks as List<Track>,
+                            error = null
+                        )
+                    },
+                    onFailure = { exception ->
+
+                        _uiState.value = _uiState.value.copy(
+                            error = null
+                        )
+                    }
+                )
+            } catch (e: Exception) {
+
+                _uiState.value = _uiState.value.copy(
+                    error = null
+                )
+            }
+        }
     }
+
 }

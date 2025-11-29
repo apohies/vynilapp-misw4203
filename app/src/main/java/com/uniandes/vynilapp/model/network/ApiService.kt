@@ -3,10 +3,13 @@ package com.uniandes.vynilapp.model.network
 import com.uniandes.vynilapp.model.dto.AlbumCreateDto
 import com.uniandes.vynilapp.model.dto.AddCommentResponse
 import com.uniandes.vynilapp.model.dto.AddCommnetDto
+import com.uniandes.vynilapp.model.dto.AddTrackDto
+import com.uniandes.vynilapp.model.dto.AddTrackResponseDto
 import com.uniandes.vynilapp.model.dto.AlbumDto
 import com.uniandes.vynilapp.model.dto.ArtistDto
 import com.uniandes.vynilapp.model.dto.CollectorDto
 import com.uniandes.vynilapp.model.dto.CollectorAlbumsDto
+import com.uniandes.vynilapp.model.dto.TrackDto
 import com.uniandes.vynilapp.utils.ApiConfig
 import retrofit2.Response
 import retrofit2.http.Body
@@ -61,4 +64,12 @@ interface ApiService {
 
     @GET(ApiConfig.COLLECTORS_DETAIL_ALBUMS_ENDPOINT)
     suspend fun getAllAlbumsByCollector(@Path("id") collectorId: Int): Response<List<CollectorAlbumsDto>>
+
+    @POST(ApiConfig.ADD_TRACK_ENDPOINT)
+    suspend fun addTrackToAlbum(
+        @Path("albumId") albumId: Int,
+        @Body track: AddTrackDto ): Response<AddTrackResponseDto>
+
+
+
 }

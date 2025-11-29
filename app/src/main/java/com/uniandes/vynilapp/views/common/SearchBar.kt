@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
 @Composable
 fun SearchBar(
@@ -32,7 +34,14 @@ fun SearchBar(
                 color = Color(0xFF1E1E2E),
                 shape = RoundedCornerShape(8.dp)
             )
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .semantics(mergeDescendants = true) {
+                contentDescription = if (value.isEmpty()) {
+                    "Search field, $placeholder"
+                } else {
+                    "Search field, current text: $value"
+                }
+            },
         contentAlignment = Alignment.CenterStart
     ) {
         Row(
@@ -41,7 +50,7 @@ fun SearchBar(
         ) {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search",
+                contentDescription = null, // Set to null since parent has contentDescription
                 tint = Color(0xFF6B7280),
                 modifier = Modifier.size(20.dp)
             )
