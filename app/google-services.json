@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "374848146852",
+    "project_id": "vynilapp-uniandes",
+    "storage_bucket": "vynilapp-uniandes.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374848146852:android:601702cacc3d0a98df0531",
+        "android_client_info": {
+          "package_name": "com.uniandes.vynilapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApldTs0FkyC3Bc8q5CezjSd4sVXyUuIcs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
