@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -231,11 +233,14 @@ fun AlbumHeader(
                         .size(120.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(Color.Gray)
+                        .semantics {
+                            contentDescription = "Album cover for ${album?.name ?: "album"}"
+                        }
                 ) {
                     if(album?.cover != null){
                         AsyncImage(
                             model = album?.cover,
-                            contentDescription = album?.name,
+                            contentDescription = null, // Set to null since parent Box has description
                             modifier = Modifier
                                 .fillMaxWidth(),
                             contentScale = ContentScale.Crop
@@ -255,7 +260,7 @@ fun AlbumHeader(
                     ) {
                         Icon(
                             if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Me gusta",
+                            contentDescription = if (isLiked) "Unlike ${album?.name}" else "Like ${album?.name}",
                             tint = if (isLiked) Color.Red else Color.White
                         )
                     }
@@ -265,7 +270,7 @@ fun AlbumHeader(
                     ) {
                         Icon(
                             if (isSaved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                            contentDescription = "Guardar",
+                            contentDescription = if (isSaved) "Remove ${album?.name} from saved" else "Save ${album?.name}",
                             tint = if (isSaved) Color(0xFF9C27B0) else Color.White
                         )
                     }
@@ -275,14 +280,14 @@ fun AlbumHeader(
                     ) {
                         Icon(
                             Icons.Default.Share,
-                            contentDescription = "Compartir",
+                            contentDescription = "Share ${album?.name}",
                             tint = Color.White
                         )
                     }
                 }
             }
         }
-        
+
         // Información del álbum
         Column(
             modifier = Modifier.weight(1f),
@@ -417,14 +422,14 @@ fun SongItem(track: Track) {
                 color = Color.Gray,
                 fontSize = 14.sp
             )
-            
+
             Text(
                 text = track.name,
                 color = Color.White,
                 fontSize = 16.sp
             )
         }
-        
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -434,11 +439,11 @@ fun SongItem(track: Track) {
                 color = Color.Gray,
                 fontSize = 14.sp
             )
-            
+
             IconButton(onClick = { /* Menú de canción */ }) {
                 Icon(
                     Icons.Default.MoreVert,
-                    contentDescription = "Song menu",
+                    contentDescription = "Song menu for ${track.name}",
                     tint = Color.Gray,
                     modifier = Modifier.size(16.dp)
                 )
@@ -447,7 +452,7 @@ fun SongItem(track: Track) {
     }
 }
 
-    @Composable
+@Composable
 fun CommentsSection(
     comments: List<Comment>,
     newCommentText: String,
@@ -494,7 +499,7 @@ fun CommentsSection(
                             } else {
                                 Icons.Default.StarBorder
                             },
-                            contentDescription = "Star ${index + 1}",
+                            contentDescription = "${index + 1} star${if (index == 0) "" else "s"}, ${if (index < selectedRating) "selected" else "not selected"}",
                             tint = if (index < selectedRating) {
                                 Color(0xFFFFD700)
                             } else {
