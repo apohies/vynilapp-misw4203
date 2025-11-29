@@ -154,14 +154,14 @@ fun PlusIconButton(onClick:() -> Unit, modifier: Modifier = Modifier) {
         modifier = Modifier.size(48.dp),
         colors = IconButtonColors(
             contentColor = Color.White,
-            containerColor = Color(0xFF6C63FF),
+            containerColor = Color(0xFF8B7FFF),
             disabledContentColor = Color.Gray,
             disabledContainerColor = Color.Black
         )
     ) {
         Icon(
             imageVector = Icons.Filled.Add,
-            contentDescription = "Add" // Content description for accessibility
+            contentDescription = "Add new album"
         )
     }
 }
