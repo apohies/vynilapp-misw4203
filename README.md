@@ -13,7 +13,7 @@
 
 ### Enlace a la apk pre-construida
 
-Descarga una apk en version debug de la aplicación [aquí](./apks/semana-6/app-debug.apk)
+Descarga una apk en version debug de la aplicación [aquí](./app-debug.apk)
 
 ### Build an apk
 
