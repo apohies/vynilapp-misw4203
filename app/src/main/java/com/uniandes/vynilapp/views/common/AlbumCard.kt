@@ -14,6 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
 @Composable
 fun AlbumCard(
@@ -25,7 +27,10 @@ fun AlbumCard(
 ) {
     Card(
         modifier = modifier
-            .width(160.dp),
+            .width(160.dp)
+            .semantics(mergeDescendants = true) {
+                contentDescription = "Album: $albumTitle by $artistName. Double tap to view details."
+            },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
@@ -36,7 +41,7 @@ fun AlbumCard(
             // Imagen del álbum
             AsyncImage(
                 model = imageUrl,
-                contentDescription = albumTitle,
+                contentDescription = "Album cover for $albumTitle",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(160.dp)
